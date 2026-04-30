@@ -200,7 +200,7 @@ SALONS.forEach(s => {
         <span class="result-next">Prochain créneau</span>
         <span class="result-time">${s.prochainCreneau.split(' ')[1] || s.prochainCreneau}</span>
         <span class="result-date-txt">${s.prochainCreneau.split(' ')[0] || ''}</span>
-        <span class="btn btn-primary btn-sm" style="margin-top:6px;">Réserver</span>
+        <button class="btn btn-primary btn-sm" style="margin-top:6px;" onclick="event.preventDefault();event.stopPropagation();goReservationFromSalon(${s.id});">Réserver</button>
       </div>
     </a>`;
 });

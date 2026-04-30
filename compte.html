@@ -206,7 +206,7 @@ document.getElementById('current-date').textContent = days[now.getDay()] + ' ' +
 
 // Render RDV à venir
 const avenirList = document.getElementById('rdv-avenir-list');
-USER_DEMO.rdvAVenir.forEach(rdv => {
+getUserRdv().forEach(rdv => {
   avenirList.innerHTML += `
     <div class="rdv-card">
       <div class="rdv-date-block">
@@ -264,7 +264,7 @@ USER_DEMO.favoris.forEach(id => {
         <div style="font-size:12px;color:var(--sand);">📍 ${s.quartier} · ${genreBadge(s.genre, s.genreLabel)}</div>
         <div style="font-size:12px;color:var(--plum);margin-top:4px;">${renderStars(s.note)} ${s.note}</div>
       </div>
-      <span class="btn btn-primary btn-sm">Réserver</span>
+      <button class="btn btn-primary btn-sm" onclick="event.preventDefault();event.stopPropagation();goReservationFromSalon(${s.id}, USER_DEMO.prenom + ' ' + USER_DEMO.nom);">Réserver</button>
     </a>`;
   sidebarFavs.innerHTML += `
     <a href="salon.html?id=${s.id}" style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border-soft);text-decoration:none;color:inherit;">

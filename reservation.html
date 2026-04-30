@@ -232,6 +232,52 @@ function goConfirm() {
   document.getElementById('cf-adresse').textContent = salon.quartier;
   document.getElementById('cf-prix').textContent = (booking.prix || 45) + ' TND';
 
+  const clientName = booking.clientName || sessionStorage.getItem('user_name') || USER_DEMO.prenom + ' ' + USER_DEMO.nom;
+  const clientTel = booking.clientTel || sessionStorage.getItem('user_tel') || USER_DEMO.tel;
+  const rdv = {
+    salonId: salon.id,
+    salonNom: salon.nom,
+    service: booking.service || 'Coupe + Barbe',
+    date: selectedDate,
+    heure: selectedHeure,
+    prix: booking.prix || 45,
+    adresse: salon.quartier,
+    statut: 'confirmé'
+  };
+  saveUserRdv(rdv);
+
+  const proReservations = getProReservations();
+  const newId = 'R-' + String(Date.now()).slice(-6);
+  proReservations.unshift({
+    id: newId,
+    client: clientName,
+    service: rdv.service,
+    date: selectedDate,
+    heure: selectedHeure,
+    statut: 'Confirmé',
+    montant: rdv.prix
+  });
+  saveProReservations(proReservations);
+
+  const proClients = getProClients();
+  const existingClient = proClients.find(c => c.nom.toLowerCase() === clientName.toLowerCase());
+  if (existingClient) {
+    existingClient.visites += 1;
+    existingClient.derniereVisite = "Aujourd'hui";
+    existingClient.preference = rdv.service;
+  } else {
+    proClients.unshift({
+      id: Date.now(),
+      nom: clientName,
+      tel: clientTel,
+      visites: 1,
+      derniereVisite: "Aujourd'hui",
+      preference: rdv.service,
+      statut: 'Nouveau'
+    });
+  }
+  saveProClients(proClients);
+
   // Move to step 3
   document.getElementById('step-2').classList.remove('active');
   document.getElementById('step-3').classList.add('active');

@@ -395,3 +395,69 @@ function genreBadge(genre, label) {
   const cls = { men: 'badge-men', women: 'badge-women', mixed: 'badge-mixed' };
   return `<span class="badge ${cls[genre]}">${label}</span>`;
 }
+
+const STORAGE_KEYS = {
+  userRdv: "koupe_user_rdv_avenir",
+  proClients: "koupe_pro_clients",
+  proReservations: "koupe_pro_reservations",
+};
+
+function readStorageArray(key, fallback) {
+  try {
+    const raw = localStorage.getItem(key);
+    if (!raw) return fallback.slice();
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : fallback.slice();
+  } catch (e) {
+    return fallback.slice();
+  }
+}
+
+function writeStorageArray(key, value) {
+  localStorage.setItem(key, JSON.stringify(value));
+}
+
+function getUserRdv() {
+  return readStorageArray(STORAGE_KEYS.userRdv, USER_DEMO.rdvAVenir);
+}
+
+function getProClients() {
+  return readStorageArray(STORAGE_KEYS.proClients, PRO_DEMO.clients);
+}
+
+function getProReservations() {
+  return readStorageArray(STORAGE_KEYS.proReservations, PRO_DEMO.reservations);
+}
+
+function saveProClients(clients) {
+  writeStorageArray(STORAGE_KEYS.proClients, clients);
+}
+
+function saveProReservations(reservations) {
+  writeStorageArray(STORAGE_KEYS.proReservations, reservations);
+}
+
+function saveUserRdv(rdv) {
+  const data = getUserRdv();
+  data.unshift(rdv);
+  writeStorageArray(STORAGE_KEYS.userRdv, data);
+}
+
+function goReservationFromSalon(salonId, clientName) {
+  const salon = getSalonById(salonId) || SALONS[0];
+  const first = salon.services[0] && salon.services[0].items[0] ? salon.services[0].items[0] : { nom: "Coupe", prix: salon.prixMin, duree: "30 min" };
+  const name = clientName || sessionStorage.getItem("user_name") || USER_DEMO.prenom;
+  const booking = {
+    salonId: salon.id,
+    salonNom: salon.nom,
+    service: first.nom,
+    prix: first.prix,
+    duree: first.duree,
+    date: "Mer. 30 avr.",
+    heure: "10h30",
+    clientName: name,
+    clientTel: sessionStorage.getItem("user_tel") || USER_DEMO.tel,
+  };
+  sessionStorage.setItem("booking", JSON.stringify(booking));
+  window.location.href = "reservation.html";
+}

@@ -122,6 +122,15 @@ body { display:flex; min-height:100vh; background:var(--cream); font-family:var(
 .status-pill.ok { background:var(--plum-soft); color:var(--plum); }
 .status-pill.pending { background:var(--almond-soft); color:var(--velvet); }
 .status-pill.cancel { background:#f9e4e4; color:#a93f3f; }
+.filters-row { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px; }
+.search-input { background:#fff; border:1px solid var(--border); border-radius:10px; padding:10px 12px; font-size:13px; min-width:220px; }
+.select-input { background:#fff; border:1px solid var(--border); border-radius:10px; padding:10px 12px; font-size:13px; min-width:170px; }
+.inline-form { display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; }
+.mini-card-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+@media (max-width:900px) { .mini-card-grid { grid-template-columns:1fr; } }
+.mini-card { background:#fff; border:1px solid var(--border); border-radius:14px; padding:16px; }
+.mini-card-title { font-size:12px; color:var(--sand); margin-bottom:6px; text-transform:uppercase; letter-spacing:.08em; font-weight:600; }
+.mini-card-value { font-family:var(--font-display); font-size:30px; color:var(--velvet); font-style:italic; }
 </style>
 </head>
 <body>
@@ -274,7 +283,16 @@ body { display:flex; min-height:100vh; background:var(--cream); font-family:var(
     <div class="pro-card">
       <div class="pro-card-header">
         <div class="pro-card-title">Liste des <em>clients</em></div>
-        <button class="btn btn-primary btn-sm" onclick="showToast('👤 Nouveau client','Formulaire client ouvert.')">+ Ajouter</button>
+        <button class="btn btn-primary btn-sm" onclick="addClient()">+ Ajouter</button>
+      </div>
+      <div class="filters-row">
+        <input id="client-search" class="search-input" type="text" placeholder="Rechercher un client..." oninput="renderClientsTable()">
+        <select id="client-status-filter" class="select-input" onchange="renderClientsTable()">
+          <option value="all">Tous statuts</option>
+          <option value="VIP">VIP</option>
+          <option value="Actif">Actif</option>
+          <option value="Nouveau">Nouveau</option>
+        </select>
       </div>
       <table class="list-table">
         <thead>
@@ -285,10 +303,16 @@ body { display:flex; min-height:100vh; background:var(--cream); font-family:var(
             <th>Dernière visite</th>
             <th>Préférence</th>
             <th>Statut</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody id="clients-table"></tbody>
       </table>
+      <div class="inline-form">
+        <input id="new-client-name" class="search-input" type="text" placeholder="Nom client">
+        <input id="new-client-tel" class="search-input" type="text" placeholder="Téléphone">
+        <input id="new-client-pref" class="search-input" type="text" placeholder="Préférence">
+      </div>
     </div>
   </section>
 
@@ -296,7 +320,17 @@ body { display:flex; min-height:100vh; background:var(--cream); font-family:var(
     <div class="pro-card">
       <div class="pro-card-header">
         <div class="pro-card-title">Réservations du <em>jour</em></div>
-        <button class="btn btn-outline btn-sm" onclick="showToast('🔄 Synchronisation','Réservations mises à jour.')">Actualiser</button>
+        <button class="btn btn-outline btn-sm" onclick="renderReservationsTable()">Actualiser</button>
+      </div>
+      <div class="filters-row">
+        <input id="reservation-search" class="search-input" type="text" placeholder="Rechercher client/prestation..." oninput="renderReservationsTable()">
+        <select id="reservation-status-filter" class="select-input" onchange="renderReservationsTable()">
+          <option value="all">Tous statuts</option>
+          <option value="Confirmé">Confirmé</option>
+          <option value="En attente">En attente</option>
+          <option value="Annulé">Annulé</option>
+        </select>
+        <button class="btn btn-primary btn-sm" onclick="addReservation()">+ Réservation</button>
       </div>
       <table class="list-table">
         <thead>
@@ -308,17 +342,103 @@ body { display:flex; min-height:100vh; background:var(--cream); font-family:var(
             <th>Heure</th>
             <th>Montant</th>
             <th>Statut</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody id="reservations-table"></tbody>
       </table>
+      <div class="inline-form">
+        <input id="new-res-client" class="search-input" type="text" placeholder="Client">
+        <input id="new-res-service" class="search-input" type="text" placeholder="Prestation">
+        <input id="new-res-time" class="search-input" type="text" placeholder="Heure ex: 17h00">
+        <input id="new-res-price" class="search-input" type="number" placeholder="Montant">
+      </div>
+    </div>
+  </section>
+
+  <section class="pro-section" id="section-services">
+    <div class="pro-card">
+      <div class="pro-card-header"><div class="pro-card-title">Services & <em>prix</em></div></div>
+      <table class="list-table">
+        <thead><tr><th>Service</th><th>Durée</th><th>Prix</th><th>Action</th></tr></thead>
+        <tbody id="services-table"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="pro-section" id="section-equipe">
+    <div class="pro-card">
+      <div class="pro-card-header"><div class="pro-card-title">Équipe <em>salon</em></div></div>
+      <table class="list-table">
+        <thead><tr><th>Membre</th><th>Rôle</th><th>Spécialité</th><th>Disponibilité</th></tr></thead>
+        <tbody id="team-table"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="pro-section" id="section-stats">
+    <div class="mini-card-grid">
+      <div class="mini-card"><div class="mini-card-title">CA Hebdo</div><div class="mini-card-value">1 980</div><div class="stat-trend">+12% vs sem. passée</div></div>
+      <div class="mini-card"><div class="mini-card-title">Panier Moyen</div><div class="mini-card-value">39 TND</div><div class="stat-trend">+4 TND</div></div>
+      <div class="mini-card"><div class="mini-card-title">No-show</div><div class="mini-card-value">6%</div><div class="stat-trend down">-1% à améliorer</div></div>
+    </div>
+  </section>
+
+  <section class="pro-section" id="section-avis">
+    <div class="pro-card">
+      <div class="pro-card-header"><div class="pro-card-title">Avis <em>clients</em></div></div>
+      <div id="reviews-list"></div>
+    </div>
+  </section>
+
+  <section class="pro-section" id="section-marketing">
+    <div class="pro-card">
+      <div class="pro-card-header"><div class="pro-card-title">Campagnes <em>marketing</em></div></div>
+      <table class="list-table">
+        <thead><tr><th>Campagne</th><th>Cible</th><th>Statut</th><th>Performance</th></tr></thead>
+        <tbody id="marketing-table"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="pro-section" id="section-abonnement">
+    <div class="pro-card">
+      <div class="pro-card-header"><div class="pro-card-title">Abonnement <em>Pro</em></div></div>
+      <div style="font-size:14px;color:var(--velvet-2);line-height:1.7;">
+        <p><strong>Plan actuel:</strong> Pro Growth - 149 TND/mois</p>
+        <p><strong>Prochaine facture:</strong> 05 Mai 2026</p>
+        <p><strong>Fonctions actives:</strong> agenda, rappels SMS, statistiques, marketing.</p>
+      </div>
+      <button class="btn btn-primary btn-sm" style="margin-top:12px;" onclick="showToast('💎 Upgrade','Notre équipe vous contacte pour le plan Enterprise.')">Passer en Enterprise</button>
+    </div>
+  </section>
+
+  <section class="pro-section" id="section-params">
+    <div class="pro-card">
+      <div class="pro-card-header"><div class="pro-card-title">Paramètres <em>salon</em></div></div>
+      <div class="inline-form">
+        <input class="search-input" type="text" value="Barber Elite Tunis">
+        <input class="search-input" type="text" value="+216 71 234 567">
+        <input class="search-input" type="text" value="Lac 1, Tunis">
+      </div>
+      <button class="btn btn-primary btn-sm" style="margin-top:12px;" onclick="showToast('✓ Paramètres','Paramètres sauvegardés.')">Enregistrer</button>
     </div>
   </section>
 </main>
 
 <script src="script/_shared.js"></script>
 <script>
-// Fill agenda
+const EXTRA_TEAM = [
+  { nom: "Zakaria Bensalem", role: "Gérant", specialite: "Coupe + Barbe", dispo: "Mar-Sam" },
+  { nom: "Ahmed L.", role: "Barbier Senior", specialite: "Rasage traditionnel", dispo: "Lun-Ven" },
+  { nom: "Karim F.", role: "Barbier", specialite: "Skin fade", dispo: "Mer-Dim" },
+];
+const EXTRA_MARKETING = [
+  { nom: "SMS relance no-show", cible: "Clients inactifs", statut: "Actif", perf: "31 réservations" },
+  { nom: "Offre -10% mardi", cible: "Tous clients", statut: "Planifié", perf: "Démarre demain" },
+  { nom: "Programme fidélité", cible: "Clients VIP", statut: "Actif", perf: "42 membres" },
+];
+
 const agendaList = document.getElementById('agenda-list');
 PRO_DEMO.agenda.forEach(slot => {
   let slotHtml = '';
@@ -330,43 +450,58 @@ PRO_DEMO.agenda.forEach(slot => {
     const cls = slot.statut;
     slotHtml = `<div class="agenda-slot ${cls}"><span class="ag-client">${slot.client}</span><span class="ag-service">${slot.service} · ${slot.duree} min</span><button class="btn btn-ghost btn-sm" style="margin-left:auto;font-size:11px;${slot.statut.includes('velvet')||slot.statut.includes('plum')?'color:#fff;':''}" onclick="showToast('📋 RDV','Détails de ${slot.client}')">Détails</button></div>`;
   }
-  agendaList.innerHTML += `
-    <div class="agenda-row">
-      <div class="agenda-time-txt">${slot.heure}</div>
-      ${slotHtml}
-    </div>`;
+  agendaList.innerHTML += `<div class="agenda-row"><div class="agenda-time-txt">${slot.heure}</div>${slotHtml}</div>`;
 });
 
-// Fill activity
 const actList = document.getElementById('activity-list');
 PRO_DEMO.activite.forEach(a => {
-  const ico = { new:'📥', check:'✓', review:'⭐' }[a.type] || '•';
-  actList.innerHTML += `
-    <div class="activity-item">
-      <div class="activity-ico ${a.type}">${ico}</div>
-      <div><div class="activity-txt">${a.texte}</div><div class="activity-time">${a.temps}</div></div>
-    </div>`;
+  const ico = { new: '📥', check: '✓', review: '⭐' }[a.type] || '•';
+  actList.innerHTML += `<div class="activity-item"><div class="activity-ico ${a.type}">${ico}</div><div><div class="activity-txt">${a.texte}</div><div class="activity-time">${a.temps}</div></div></div>`;
 });
 
-const clientsTable = document.getElementById('clients-table');
-PRO_DEMO.clients.forEach(c => {
-  const cls = c.statut === 'VIP' ? 'ok' : c.statut === 'Nouveau' ? 'pending' : 'ok';
-  clientsTable.innerHTML += `
-    <tr>
+let proClientsData = getProClients();
+let proReservationsData = getProReservations();
+
+function renderClientsTable() {
+  const q = (document.getElementById('client-search').value || '').toLowerCase();
+  const status = document.getElementById('client-status-filter').value;
+  const rows = proClientsData.filter(c => {
+    const matchQ = c.nom.toLowerCase().includes(q) || c.tel.toLowerCase().includes(q) || c.preference.toLowerCase().includes(q);
+    const matchStatus = status === 'all' ? true : c.statut === status;
+    return matchQ && matchStatus;
+  });
+  const table = document.getElementById('clients-table');
+  table.innerHTML = '';
+  rows.forEach(c => {
+    const cls = c.statut === 'VIP' ? 'ok' : c.statut === 'Nouveau' ? 'pending' : 'ok';
+    table.innerHTML += `<tr>
       <td><strong>${c.nom}</strong></td>
       <td>${c.tel}</td>
       <td>${c.visites}</td>
       <td>${c.derniereVisite}</td>
       <td>${c.preference}</td>
       <td><span class="status-pill ${cls}">${c.statut}</span></td>
+      <td>
+        <button class="btn btn-outline btn-sm" onclick="editClient(${c.id})">Modifier</button>
+        <button class="btn btn-ghost btn-sm" style="color:#c0392b;" onclick="deleteClient(${c.id})">Supprimer</button>
+      </td>
     </tr>`;
-});
+  });
+}
 
-const reservationsTable = document.getElementById('reservations-table');
-PRO_DEMO.reservations.forEach(r => {
-  const cls = r.statut === 'Confirmé' ? 'ok' : r.statut === 'En attente' ? 'pending' : 'cancel';
-  reservationsTable.innerHTML += `
-    <tr>
+function renderReservationsTable(showMsg = false) {
+  const q = (document.getElementById('reservation-search').value || '').toLowerCase();
+  const status = document.getElementById('reservation-status-filter').value;
+  const rows = proReservationsData.filter(r => {
+    const matchQ = r.client.toLowerCase().includes(q) || r.service.toLowerCase().includes(q) || r.id.toLowerCase().includes(q);
+    const matchStatus = status === 'all' ? true : r.statut === status;
+    return matchQ && matchStatus;
+  });
+  const table = document.getElementById('reservations-table');
+  table.innerHTML = '';
+  rows.forEach(r => {
+    const cls = r.statut === 'Confirmé' ? 'ok' : r.statut === 'En attente' ? 'pending' : 'cancel';
+    table.innerHTML += `<tr>
       <td><strong>${r.id}</strong></td>
       <td>${r.client}</td>
       <td>${r.service}</td>
@@ -374,28 +509,187 @@ PRO_DEMO.reservations.forEach(r => {
       <td>${r.heure}</td>
       <td>${r.montant} TND</td>
       <td><span class="status-pill ${cls}">${r.statut}</span></td>
+      <td>
+        <button class="btn btn-outline btn-sm" onclick="editReservation('${r.id}')">Modifier</button>
+        <button class="btn btn-ghost btn-sm" style="color:#c0392b;" onclick="deleteReservation('${r.id}')">Supprimer</button>
+      </td>
     </tr>`;
-});
+  });
+  if (showMsg) showToast('🔄 Synchronisation', 'Réservations mises à jour.');
+}
+
+function addClient() {
+  const nom = document.getElementById('new-client-name').value.trim();
+  const tel = document.getElementById('new-client-tel').value.trim();
+  const pref = document.getElementById('new-client-pref').value.trim();
+  if (!nom || !tel) return showToast('⚠️ Champs requis', 'Nom et téléphone sont obligatoires.');
+  proClientsData.unshift({ id: Date.now(), nom, tel, visites: 0, derniereVisite: 'N/A', preference: pref || 'Non défini', statut: 'Nouveau' });
+  saveProClients(proClientsData);
+  document.getElementById('new-client-name').value = '';
+  document.getElementById('new-client-tel').value = '';
+  document.getElementById('new-client-pref').value = '';
+  renderClientsTable();
+  showToast('👤 Client ajouté', nom + ' a été ajouté.');
+}
+
+function addReservation() {
+  const client = document.getElementById('new-res-client').value.trim();
+  const service = document.getElementById('new-res-service').value.trim();
+  const heure = document.getElementById('new-res-time').value.trim() || '17h00';
+  const montant = parseInt(document.getElementById('new-res-price').value, 10) || 0;
+  if (!client || !service) return showToast('⚠️ Champs requis', 'Client et prestation sont obligatoires.');
+  proReservationsData.unshift({ id: 'R-' + String(Date.now()).slice(-6), client, service, date: "Aujourd'hui", heure, statut: 'En attente', montant });
+  saveProReservations(proReservationsData);
+  document.getElementById('new-res-client').value = '';
+  document.getElementById('new-res-service').value = '';
+  document.getElementById('new-res-time').value = '';
+  document.getElementById('new-res-price').value = '';
+  renderReservationsTable();
+  showToast('🗓️ Réservation créée', client + " ajoute a l'agenda.");
+}
+
+function editClient(id) {
+  const client = proClientsData.find(c => c.id === id);
+  if (!client) return;
+  const nom = prompt('Nom client', client.nom);
+  if (nom === null) return;
+  const tel = prompt('Téléphone', client.tel);
+  if (tel === null) return;
+  const preference = prompt('Préférence', client.preference);
+  if (preference === null) return;
+  const statut = prompt('Statut (VIP, Actif, Nouveau)', client.statut);
+  if (statut === null) return;
+  client.nom = nom.trim() || client.nom;
+  client.tel = tel.trim() || client.tel;
+  client.preference = preference.trim() || client.preference;
+  client.statut = (statut.trim() || client.statut);
+  saveProClients(proClientsData);
+  renderClientsTable();
+  showToast('✏️ Client modifié', client.nom + ' mis a jour.');
+}
+
+function deleteClient(id) {
+  const client = proClientsData.find(c => c.id === id);
+  if (!client) return;
+  if (!confirm('Supprimer le client ' + client.nom + ' ?')) return;
+  proClientsData = proClientsData.filter(c => c.id !== id);
+  saveProClients(proClientsData);
+  renderClientsTable();
+  showToast('🗑️ Client supprimé', client.nom + ' retire de la liste.');
+}
+
+function editReservation(id) {
+  const res = proReservationsData.find(r => r.id === id);
+  if (!res) return;
+  const client = prompt('Client', res.client);
+  if (client === null) return;
+  const service = prompt('Prestation', res.service);
+  if (service === null) return;
+  const date = prompt('Date', res.date);
+  if (date === null) return;
+  const heure = prompt('Heure', res.heure);
+  if (heure === null) return;
+  const montantRaw = prompt('Montant (TND)', String(res.montant));
+  if (montantRaw === null) return;
+  const statut = prompt('Statut (Confirmé, En attente, Annulé)', res.statut);
+  if (statut === null) return;
+  const montant = parseInt(montantRaw, 10);
+  res.client = client.trim() || res.client;
+  res.service = service.trim() || res.service;
+  res.date = date.trim() || res.date;
+  res.heure = heure.trim() || res.heure;
+  res.montant = Number.isNaN(montant) ? res.montant : montant;
+  res.statut = statut.trim() || res.statut;
+  saveProReservations(proReservationsData);
+  renderReservationsTable();
+  showToast('✏️ Réservation modifiée', res.id + ' mise a jour.');
+}
+
+function deleteReservation(id) {
+  const res = proReservationsData.find(r => r.id === id);
+  if (!res) return;
+  if (!confirm('Supprimer la réservation ' + id + ' ?')) return;
+  proReservationsData = proReservationsData.filter(r => r.id !== id);
+  saveProReservations(proReservationsData);
+  renderReservationsTable();
+  showToast('🗑️ Réservation supprimée', id + ' retiree.');
+}
+
+function renderServicesSection() {
+  const salon = getSalonById(PRO_DEMO.salonId) || SALONS[0];
+  const body = document.getElementById('services-table');
+  body.innerHTML = '';
+  salon.services.forEach(cat => cat.items.forEach(item => {
+    body.innerHTML += `<tr><td><strong>${item.nom}</strong><br><span style="font-size:11px;color:var(--sand);">${cat.cat}</span></td><td>${item.duree}</td><td>${item.prix} TND</td><td><button class="btn btn-outline btn-sm" onclick="showToast('✏️ Service','Edition ${item.nom}')">Modifier</button></td></tr>`;
+  }));
+}
+
+function renderTeamSection() {
+  const body = document.getElementById('team-table');
+  body.innerHTML = '';
+  EXTRA_TEAM.forEach(t => { body.innerHTML += `<tr><td><strong>${t.nom}</strong></td><td>${t.role}</td><td>${t.specialite}</td><td>${t.dispo}</td></tr>`; });
+}
+
+function renderReviewsSection() {
+  const salon = getSalonById(PRO_DEMO.salonId) || SALONS[0];
+  const wrap = document.getElementById('reviews-list');
+  wrap.innerHTML = '';
+  salon.avis.forEach(a => {
+    wrap.innerHTML += `<div class="activity-item"><div class="activity-ico review">⭐</div><div><div class="activity-txt"><strong>${a.nom}</strong> — ${a.texte}</div><div class="activity-time">${a.date}</div></div></div>`;
+  });
+}
+
+function renderMarketingSection() {
+  const body = document.getElementById('marketing-table');
+  body.innerHTML = '';
+  EXTRA_MARKETING.forEach(m => {
+    const cls = m.statut === 'Actif' ? 'ok' : 'pending';
+    body.innerHTML += `<tr><td><strong>${m.nom}</strong></td><td>${m.cible}</td><td><span class="status-pill ${cls}">${m.statut}</span></td><td>${m.perf}</td></tr>`;
+  });
+}
 
 function switchSection(section, el) {
   document.querySelectorAll('.pro-menu-item').forEach(i => i.classList.remove('active'));
   el.classList.add('active');
   document.querySelectorAll('.pro-section').forEach(s => s.classList.remove('active'));
-
   const map = {
     dashboard: 'section-dashboard',
     agenda: 'section-dashboard',
     clients: 'section-clients',
     reservations: 'section-reservations',
+    services: 'section-services',
+    equipe: 'section-equipe',
+    stats: 'section-stats',
+    avis: 'section-avis',
+    marketing: 'section-marketing',
+    abonnement: 'section-abonnement',
+    params: 'section-params',
   };
   const target = document.getElementById(map[section] || 'section-dashboard');
   target.classList.add('active');
-
-  const names = { dashboard:'Tableau de bord', agenda:'Agenda', clients:'Clients', reservations:'Réservations', services:'Services & Prix', equipe:'Équipe', stats:'Statistiques', avis:'Avis clients', marketing:'Marketing', abonnement:'Abonnement', params:'Paramètres' };
-  if (!map[section]) {
-    showToast('📋 ' + (names[section] || section), 'Section ' + (names[section] || section) + ' bientôt disponible.');
-  }
 }
+
+renderClientsTable();
+renderReservationsTable();
+renderServicesSection();
+renderTeamSection();
+renderReviewsSection();
+renderMarketingSection();
+
+const topSearch = document.querySelector('.pro-search');
+topSearch.addEventListener('click', () => {
+  const menu = document.querySelector('.pro-menu-item[onclick*="clients"]');
+  switchSection('clients', menu);
+  document.getElementById('client-search').focus();
+});
+
+const topNewRdvBtn = document.querySelector('.pro-topbar-actions .btn.btn-primary');
+topNewRdvBtn.setAttribute('onclick', '');
+topNewRdvBtn.addEventListener('click', () => {
+  const menu = document.querySelector('.pro-menu-item[onclick*="reservations"]');
+  switchSection('reservations', menu);
+  document.getElementById('new-res-client').focus();
+});
 
 function showToast(title, msg) {
   const c = document.getElementById('toasts');

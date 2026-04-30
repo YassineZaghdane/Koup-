@@ -372,7 +372,7 @@ getPopulaires().forEach(s => {
       </div>
       <div class="salon-card-footer">
         <div class="salon-card-slot">Prochain créneau<strong>${s.prochainCreneau}</strong></div>
-        <span class="btn btn-primary btn-sm">Réserver</span>
+        <button class="btn btn-primary btn-sm" onclick="event.preventDefault();event.stopPropagation();goReservationFromSalon(${s.id});">Réserver</button>
       </div>
     </a>`;
 });
