@@ -31,6 +31,7 @@ function initProPage(options) {
   const side = document.getElementById("pro-side");
   const top = document.getElementById("pro-topbar");
   const crumb = document.getElementById("pro-breadcrumb");
+  const main = document.querySelector(".pro-main");
 
   if (side) {
     side.innerHTML =
@@ -52,4 +53,20 @@ function initProPage(options) {
   }
 
   if (crumb) crumb.textContent = `Espace Pro / ${breadcrumb}`;
+
+  if (main) {
+    let mobileNav = document.getElementById("pro-mobile-nav");
+    if (!mobileNav) {
+      mobileNav = document.createElement("div");
+      mobileNav.id = "pro-mobile-nav";
+      mobileNav.className = "pro-mobile-nav";
+      const anchor = crumb || top;
+      if (anchor && anchor.parentNode) {
+        anchor.parentNode.insertBefore(mobileNav, anchor.nextSibling);
+      } else {
+        main.prepend(mobileNav);
+      }
+    }
+    mobileNav.innerHTML = PRO_MENU.map(([href, key, label]) => `<a href="${href}" class="${key === active ? "active" : ""}">${label}</a>`).join("");
+  }
 }

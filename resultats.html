@@ -14,10 +14,21 @@ body { padding-top: var(--nav-h); }
 .search-input-main:focus { outline:none; border-color:var(--plum); }
 .search-chips { display:flex; gap:8px; overflow-x:auto; scrollbar-width:none; flex:1; }
 .search-chips::-webkit-scrollbar { display:none; }
+.mobile-filter-toggle { display:none; }
 
 .search-body { max-width:1280px; margin:0 auto; padding:24px; display:grid; grid-template-columns:220px 1fr 340px; gap:24px; }
 @media (max-width:1100px) { .search-body { grid-template-columns:200px 1fr; } .map-col { display:none; } }
-@media (max-width:700px) { .search-body { grid-template-columns:1fr; padding:16px; } .filters-col { display:none; } }
+@media (max-width:700px) {
+  .search-top { padding:10px 14px; }
+  .search-top-inner { flex-direction:column; align-items:stretch; gap:10px; }
+  .search-input-main { max-width:none; width:100%; }
+  .search-chips { width:100%; flex-wrap:wrap; overflow:visible; }
+  .mobile-filter-toggle { display:flex; justify-content:center; width:100%; }
+  .search-body { grid-template-columns:1fr; padding:12px; gap:12px; }
+  .filters-col { display:block; position:static; top:auto; }
+  .filters-col.mobile-hidden > div { display:none; }
+  .filters-col > div { padding:14px !important; border-radius:12px !important; }
+}
 
 /* FILTERS */
 .filters-col { position:sticky; top:calc(var(--nav-h) + 64px); height:fit-content; }
@@ -92,6 +103,7 @@ body { padding-top: var(--nav-h); }
       <span class="fchip" onclick="toggleChip(this,'< 2 km')">📍 &lt; 2 km</span>
     </div>
     <button class="btn btn-primary btn-sm" onclick="doSearch()">Filtrer</button>
+    <button class="btn btn-outline btn-sm mobile-filter-toggle" onclick="toggleMobileFilters()">Filtres avancés</button>
   </div>
 </div>
 
@@ -99,7 +111,7 @@ body { padding-top: var(--nav-h); }
 <div class="search-body">
 
   <!-- FILTERS -->
-  <aside class="filters-col">
+  <aside class="filters-col mobile-hidden" id="filters-col">
     <div style="background:#fff;border:1px solid var(--border);border-radius:16px;padding:20px;">
       <div class="filter-title">Filtres</div>
 
@@ -218,6 +230,10 @@ function toggleFilter(el) {
 }
 function doSearch() {
   showToast('🔍 Recherche mise à jour','Résultats filtrés selon vos critères.');
+}
+function toggleMobileFilters() {
+  const col = document.getElementById('filters-col');
+  col.classList.toggle('mobile-hidden');
 }
 function showToast(title, msg) {
   const c = document.getElementById('toasts');

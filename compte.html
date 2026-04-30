@@ -59,6 +59,12 @@ body { padding-top: var(--nav-h); }
 .loyalty-bar-fill { height:100%; background:var(--plum); border-radius:100px; }
 .loyalty-card-grad { background:linear-gradient(135deg,var(--plum) 0%,var(--velvet) 100%); border-radius:16px; padding:20px; color:#fff; position:relative; overflow:hidden; margin-bottom:16px; }
 .loyalty-card-grad::before { content:''; position:absolute; top:-30px; right:-30px; width:120px; height:120px; background:rgba(231,212,187,.08); border-radius:50%; }
+@media (max-width:600px) {
+  .tabs { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+  .rdv-card { flex-direction:column; }
+  .rdv-actions { width:100%; align-items:flex-start; }
+  .fav-card { flex-direction:column; align-items:flex-start; }
+}
 </style>
 </head>
 <body>
