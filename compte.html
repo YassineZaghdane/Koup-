@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Koupé — Mon compte</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500;1,9..144,600&family=Inter:wght@300;400;500;600;700&family=Archivo:wght@700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_styles.css">
+<style>
+body { padding-top: var(--nav-h); }
+.account-wrap { max-width:1200px; margin:0 auto; padding:36px 24px 80px; display:grid; grid-template-columns:1fr 300px; gap:32px; }
+@media (max-width:900px) { .account-wrap { grid-template-columns:1fr; } }
+@media (max-width:600px) { .account-wrap { padding:24px 16px; } }
+
+/* Header */
+.account-header { margin-bottom:28px; }
+.account-greeting { font-family:var(--font-display); font-size:clamp(26px,3.5vw,36px); font-weight:500; letter-spacing:-0.025em; color:var(--velvet); margin-bottom:4px; }
+.account-greeting em { font-style:italic; color:var(--plum); }
+.account-date { font-size:14px; color:var(--sand); }
+
+/* Tabs */
+.tabs { display:flex; border-bottom:1px solid var(--border); margin-bottom:24px; gap:0; }
+.tab { font-size:13px; font-weight:500; color:var(--sand); padding:12px 18px; border-bottom:2px solid transparent; cursor:pointer; transition:all 0.2s; white-space:nowrap; }
+.tab:hover { color:var(--velvet); }
+.tab.active { color:var(--plum); border-bottom-color:var(--plum); font-weight:600; }
+
+/* Tab content */
+.tab-content { display:none; }
+.tab-content.active { display:block; }
+
+/* RDV Card */
+.rdv-card { background:#fff; border:1px solid var(--border); border-radius:16px; padding:18px 20px; display:flex; gap:16px; align-items:flex-start; margin-bottom:12px; transition:all 0.2s; }
+.rdv-card:hover { border-color:var(--plum); }
+.rdv-date-block { background:var(--almond-soft); border-radius:12px; padding:12px 14px; text-align:center; flex-shrink:0; min-width:60px; }
+.rdv-date-block.past { background:var(--cream); }
+.rdv-day-name { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--sand); }
+.rdv-day-num { font-family:var(--font-display); font-size:26px; font-weight:600; color:var(--plum); line-height:1; font-style:italic; }
+.rdv-day-num.past { color:var(--sand); }
+.rdv-month { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--sand); }
+.rdv-body { flex:1; }
+.rdv-salon-name { font-family:var(--font-display); font-size:17px; font-weight:500; color:var(--velvet); margin-bottom:3px; }
+.rdv-service-txt { font-size:13px; color:var(--velvet-2); margin-bottom:8px; }
+.rdv-meta { display:flex; gap:12px; font-size:12px; color:var(--sand); flex-wrap:wrap; }
+.rdv-actions { display:flex; flex-direction:column; gap:6px; flex-shrink:0; align-items:flex-end; }
+
+/* Favorites */
+.fav-card { background:#fff; border:1px solid var(--border); border-radius:14px; padding:16px; display:flex; gap:14px; align-items:center; margin-bottom:10px; text-decoration:none; color:inherit; transition:all 0.2s; }
+.fav-card:hover { border-color:var(--plum); transform:translateY(-1px); }
+.fav-img { width:56px; height:56px; border-radius:10px; flex-shrink:0; }
+
+/* Profile */
+.profile-section { background:#fff; border:1px solid var(--border); border-radius:16px; padding:24px; margin-bottom:16px; }
+.profile-avatar { width:72px; height:72px; border-radius:50%; background:linear-gradient(135deg,var(--plum),var(--plum-dark)); color:var(--almond); font-family:var(--font-display); font-size:24px; font-weight:600; display:flex; align-items:center; justify-content:center; margin:0 auto 16px; font-style:italic; }
+
+/* Sidebar */
+.sidebar-card { background:#fff; border:1px solid var(--border); border-radius:16px; padding:20px; margin-bottom:16px; }
+.sidebar-title { font-family:var(--font-display); font-size:16px; font-weight:500; color:var(--velvet); margin-bottom:14px; }
+.loyalty-bar-track { height:5px; background:var(--border); border-radius:100px; margin:10px 0 6px; overflow:hidden; }
+.loyalty-bar-fill { height:100%; background:var(--plum); border-radius:100px; }
+.loyalty-card-grad { background:linear-gradient(135deg,var(--plum) 0%,var(--velvet) 100%); border-radius:16px; padding:20px; color:#fff; position:relative; overflow:hidden; margin-bottom:16px; }
+.loyalty-card-grad::before { content:''; position:absolute; top:-30px; right:-30px; width:120px; height:120px; background:rgba(231,212,187,.08); border-radius:50%; }
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="index.html" class="logo"><span class="logo-text">Koupé</span><div class="logo-dot"></div></a>
+    <ul class="nav-links">
+      <li><a href="index.html">Accueil</a></li>
+      <li><a href="resultats.html">Salons</a></li>
+      <li><a href="dashboard-pro.html">Espace Pro</a></li>
+    </ul>
+    <div class="nav-spacer"></div>
+    <div class="nav-actions">
+      <span style="font-size:13px;color:var(--sand);padding:0 8px;" id="nav-greeting">Bonjour 👋</span>
+      <button class="btn btn-ghost btn-sm" onclick="logout()">Déconnexion</button>
+    </div>
+  </div>
+</nav>
+
+<div class="toast-container" id="toasts"></div>
+
+<div class="account-wrap">
+
+  <!-- MAIN -->
+  <div>
+    <div class="account-header">
+      <h1 class="account-greeting">Bonjour <em id="user-name">Salma</em> 👋</h1>
+      <div class="account-date" id="current-date">Mercredi 30 avril 2025</div>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('avenir')">À venir</div>
+      <div class="tab" onclick="switchTab('passes')">Passés</div>
+      <div class="tab" onclick="switchTab('favoris')">Favoris</div>
+      <div class="tab" onclick="switchTab('profil')">Profil</div>
+    </div>
+
+    <!-- À VENIR -->
+    <div class="tab-content active" id="tab-avenir">
+      <div id="rdv-avenir-list"></div>
+    </div>
+
+    <!-- PASSÉS -->
+    <div class="tab-content" id="tab-passes">
+      <div id="rdv-passes-list"></div>
+    </div>
+
+    <!-- FAVORIS -->
+    <div class="tab-content" id="tab-favoris">
+      <h3 style="font-family:var(--font-display);font-size:18px;font-weight:500;color:var(--velvet);margin-bottom:16px;">Mes salons <em style="font-style:italic;color:var(--plum);">favoris</em></h3>
+      <div id="fav-list"></div>
+      <a href="resultats.html" class="btn btn-outline" style="margin-top:8px;">Découvrir d'autres salons →</a>
+    </div>
+
+    <!-- PROFIL -->
+    <div class="tab-content" id="tab-profil">
+      <div class="profile-section">
+        <div class="profile-avatar" id="prof-avatar">SB</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+          <div class="form-group"><label class="form-label">Prénom</label><input class="form-input" type="text" value="Salma" id="prof-prenom"></div>
+          <div class="form-group"><label class="form-label">Nom</label><input class="form-input" type="text" value="Ben Khalil"></div>
+          <div class="form-group"><label class="form-label">Email</label><input class="form-input" type="email" value="salma.bk@gmail.com"></div>
+          <div class="form-group"><label class="form-label">Téléphone</label><input class="form-input" type="tel" value="+216 55 123 456"></div>
+        </div>
+        <button class="btn btn-primary" onclick="showToast('✓ Profil mis à jour','Vos informations ont été sauvegardées.')">Enregistrer les modifications</button>
+      </div>
+
+      <div class="profile-section">
+        <h3 style="font-family:var(--font-display);font-size:17px;font-weight:500;color:var(--velvet);margin-bottom:16px;">Préférences</h3>
+        <label class="form-check checked"><div class="form-check-box" style="background:var(--plum);border-color:var(--plum);color:#fff;">✓</div>Recevoir les rappels SMS de RDV</label>
+        <label class="form-check checked" style="margin-top:6px;"><div class="form-check-box" style="background:var(--plum);border-color:var(--plum);color:#fff;">✓</div>Offres et nouveautés par email</label>
+        <label class="form-check" style="margin-top:6px;"><div class="form-check-box"></div>Partager mes avis publiquement</label>
+      </div>
+
+      <div style="text-align:center;margin-top:8px;">
+        <button class="btn btn-ghost" style="color:#c0392b;" onclick="logout()">Déconnexion</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div>
+    <!-- Loyalty -->
+    <div class="loyalty-card-grad">
+      <div style="position:relative;z-index:1;">
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:.12em;font-weight:700;color:var(--almond);opacity:.8;margin-bottom:10px;">Programme Koupé Gold</div>
+        <div style="font-family:var(--font-display);font-size:38px;font-weight:500;line-height:1;font-style:italic;">650 <span style="font-size:18px;opacity:.6;font-family:var(--font-body);font-weight:400;font-style:normal;">/ 1 000 pts</span></div>
+        <div class="loyalty-bar-track"><div class="loyalty-bar-fill" style="width:65%;background:var(--almond);"></div></div>
+        <div style="font-size:11px;color:rgba(255,255,255,.6);">350 pts pour atteindre le niveau Platine</div>
+      </div>
+    </div>
+
+    <!-- Prochains RDV -->
+    <div class="sidebar-card">
+      <div class="sidebar-title">Prochain RDV</div>
+      <div style="background:var(--cream);border-radius:12px;padding:14px;">
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--sand);font-weight:700;margin-bottom:6px;">Mer. 30 avr.</div>
+        <div style="font-family:var(--font-display);font-size:16px;font-weight:500;color:var(--velvet);margin-bottom:2px;">Barber Elite Tunis</div>
+        <div style="font-size:13px;color:var(--velvet-2);margin-bottom:10px;">Coupe + Barbe · 10h30</div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-outline btn-sm" onclick="showToast('🗺 Itinéraire','Navigation bientôt disponible.')">Itinéraire</button>
+          <button class="btn btn-ghost btn-sm" style="color:#c0392b;" onclick="showToast('⚠️ Annulation','Êtes-vous sûr ? Cette action est irréversible.')">Annuler</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Parrainage -->
+    <div class="sidebar-card">
+      <div class="sidebar-title">Parrainez & gagnez</div>
+      <p style="font-size:13px;color:var(--velvet-2);line-height:1.5;margin-bottom:14px;">Invitez un ami, il reçoit <strong style="color:var(--plum);">-15 TND</strong> sur son 1er RDV et vous gagnez <strong style="color:var(--plum);">+15 TND</strong>.</p>
+      <div style="background:var(--cream);border-radius:10px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;border:1px solid var(--border);">
+        <span style="font-family:var(--font-mark);font-size:13px;font-weight:700;letter-spacing:.1em;color:var(--plum);">KOUP3-SLM42</span>
+        <button class="btn btn-ghost btn-sm" onclick="showToast('✓ Copié','Code de parrainage copié !')">Copier</button>
+      </div>
+      <button class="btn btn-plum-outline btn-sm" style="width:100%;justify-content:center;" onclick="showToast('📤 Partage','Partagez votre code avec vos amis.')">Partager mon code</button>
+    </div>
+
+    <!-- Favoris rapides -->
+    <div class="sidebar-card">
+      <div class="sidebar-title">Favoris rapides</div>
+      <div id="sidebar-favs"></div>
+    </div>
+  </div>
+
+</div>
+
+<script src="script/_shared.js"></script>
+<script>
+// Check login
+const isLogged = sessionStorage.getItem('logged_in');
+const userName = sessionStorage.getItem('user_name') || 'Salma';
+if (!isLogged) {
+  window.location.href = 'connexion.html';
+}
+document.getElementById('user-name').textContent = userName;
+document.getElementById('nav-greeting').textContent = 'Bonjour ' + userName + ' 👋';
+
+// Current date
+const now = new Date();
+const days = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+const months = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+document.getElementById('current-date').textContent = days[now.getDay()] + ' ' + now.getDate() + ' ' + months[now.getMonth()] + ' ' + now.getFullYear();
+
+// Render RDV à venir
+const avenirList = document.getElementById('rdv-avenir-list');
+USER_DEMO.rdvAVenir.forEach(rdv => {
+  avenirList.innerHTML += `
+    <div class="rdv-card">
+      <div class="rdv-date-block">
+        <div class="rdv-day-name">${rdv.date.split(' ')[0]}</div>
+        <div class="rdv-day-num">${rdv.date.split(' ')[1]}</div>
+        <div class="rdv-month">${rdv.date.split(' ')[2]}</div>
+      </div>
+      <div class="rdv-body">
+        <div class="rdv-salon-name">${rdv.salonNom}</div>
+        <div class="rdv-service-txt">${rdv.service}</div>
+        <div class="rdv-meta"><span>⏰ ${rdv.heure}</span><span>📍 ${rdv.adresse}</span><span style="color:var(--plum);font-weight:600;">${rdv.prix} TND</span></div>
+      </div>
+      <div class="rdv-actions">
+        <span class="badge badge-new" style="font-size:10px;">✓ Confirmé</span>
+        <button class="btn btn-outline btn-sm" style="margin-top:6px;" onclick="showToast('✏️ Modification','Modification de RDV bientôt disponible.')">Modifier</button>
+        <button class="btn btn-ghost btn-sm" style="color:#c0392b;font-size:11px;" onclick="showToast('⚠️ Annulation','Confirmez l\\'annulation de ce RDV ?')">Annuler</button>
+      </div>
+    </div>`;
+});
+
+// RDV passés
+const passesList = document.getElementById('rdv-passes-list');
+USER_DEMO.rdvPasses.forEach(rdv => {
+  passesList.innerHTML += `
+    <div class="rdv-card" style="opacity:.75;">
+      <div class="rdv-date-block past">
+        <div class="rdv-day-name">${rdv.date.split(' ')[0]}</div>
+        <div class="rdv-day-num past">${rdv.date.split(' ')[1]}</div>
+        <div class="rdv-month">${rdv.date.split(' ')[2]}</div>
+      </div>
+      <div class="rdv-body">
+        <div class="rdv-salon-name">${rdv.salonNom}</div>
+        <div class="rdv-service-txt">${rdv.service}</div>
+        <div class="rdv-meta"><span>⏰ ${rdv.heure}</span><span>📍 ${rdv.adresse}</span><span>${rdv.prix} TND</span></div>
+      </div>
+      <div class="rdv-actions">
+        <span class="badge" style="background:var(--border);color:var(--sand);font-size:10px;">Passé</span>
+        <button class="btn btn-ghost btn-sm" style="margin-top:6px;" onclick="showToast('⭐ Avis','Laissez un avis pour ${rdv.salonNom}')">Laisser un avis</button>
+        <a href="salon.html?id=${rdv.salonId}" class="btn btn-outline btn-sm" style="font-size:11px;">Rebooker</a>
+      </div>
+    </div>`;
+});
+
+// Favoris
+const favList = document.getElementById('fav-list');
+const sidebarFavs = document.getElementById('sidebar-favs');
+USER_DEMO.favoris.forEach(id => {
+  const s = getSalonById(id);
+  if (!s) return;
+  favList.innerHTML += `
+    <a href="salon.html?id=${s.id}" class="fav-card">
+      <div class="fav-img" style="${colorStyle(s.couleur)};"></div>
+      <div style="flex:1;">
+        <div style="font-family:var(--font-display);font-size:16px;font-weight:500;color:var(--velvet);margin-bottom:3px;">${s.nom}</div>
+        <div style="font-size:12px;color:var(--sand);">📍 ${s.quartier} · ${genreBadge(s.genre, s.genreLabel)}</div>
+        <div style="font-size:12px;color:var(--plum);margin-top:4px;">${renderStars(s.note)} ${s.note}</div>
+      </div>
+      <span class="btn btn-primary btn-sm">Réserver</span>
+    </a>`;
+  sidebarFavs.innerHTML += `
+    <a href="salon.html?id=${s.id}" style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border-soft);text-decoration:none;color:inherit;">
+      <div style="width:32px;height:32px;border-radius:8px;flex-shrink:0;${colorStyle(s.couleur)};"></div>
+      <div style="flex:1;"><div style="font-size:13px;font-weight:500;color:var(--velvet);">${s.nom}</div><div style="font-size:11px;color:var(--sand);">${s.prochainCreneau}</div></div>
+    </a>`;
+});
+
+function switchTab(id) {
+  document.querySelectorAll('.tab').forEach((t,i) => {
+    const ids = ['avenir','passes','favoris','profil'];
+    t.classList.toggle('active', ids[i] === id);
+  });
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+}
+
+function logout() {
+  sessionStorage.clear();
+  window.location.href = 'index.html';
+}
+
+function showToast(title, msg) {
+  const c = document.getElementById('toasts');
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.innerHTML = `<div class="toast-icon info">🔔</div><div><div class="toast-title">${title}</div><div class="toast-msg">${msg}</div></div>`;
+  c.appendChild(t);
+  setTimeout(() => t.remove(), 4000);
+}
+</script>
+</body>
+</html>

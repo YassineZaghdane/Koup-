@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Koupé — Réservation</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500;1,9..144,600&family=Inter:wght@300;400;500;600;700&family=Archivo:wght@700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_styles.css">
+<style>
+body { padding-top: var(--nav-h); background: var(--cream); }
+.flow-wrap { max-width:1100px; margin:0 auto; padding:40px 24px 80px; }
+.flow-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:36px; flex-wrap:wrap; gap:14px; }
+
+.flow-body { display:grid; grid-template-columns:1fr 340px; gap:32px; }
+@media (max-width:900px) { .flow-body { grid-template-columns:1fr; } }
+
+/* Steps */
+.steps-panel { background:#fff; border:1px solid var(--border); border-radius:20px; padding:28px; }
+.step-section { display:none; }
+.step-section.active { display:block; }
+.step-title { font-family:var(--font-display); font-size:22px; font-weight:500; letter-spacing:-0.02em; margin-bottom:20px; color:var(--velvet); }
+.step-title em { font-style:italic; color:var(--plum); }
+
+/* Service selector */
+.service-option { padding:16px; border:1.5px solid var(--border); border-radius:14px; cursor:pointer; transition:all 0.2s; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; }
+.service-option:hover { border-color:var(--plum); }
+.service-option.selected { border-color:var(--plum); background:var(--plum-soft); }
+.service-option-name { font-size:15px; font-weight:600; color:var(--velvet); margin-bottom:3px; }
+.service-option-meta { font-size:12px; color:var(--sand); }
+.service-option-price { font-family:var(--font-display); font-size:18px; font-weight:600; color:var(--plum); font-style:italic; }
+
+/* Confirmation success */
+.confirm-wrap { text-align:center; padding:20px 0; }
+.confirm-icon { width:80px; height:80px; background:var(--almond); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:36px; color:var(--plum); margin:0 auto 20px; }
+.confirm-title { font-family:var(--font-display); font-size:28px; font-weight:500; letter-spacing:-0.02em; margin-bottom:8px; color:var(--velvet); }
+.confirm-subtitle { font-size:15px; color:var(--sand); margin-bottom:28px; }
+.confirm-card { background:var(--cream); border:1px solid var(--border); border-radius:16px; padding:20px; text-align:left; margin-bottom:22px; }
+.confirm-row { display:flex; justify-content:space-between; padding:9px 0; border-bottom:1px solid var(--border-soft); font-size:14px; color:var(--velvet-2); }
+.confirm-row:last-child { border-bottom:none; }
+.confirm-row strong { font-weight:600; color:var(--velvet); }
+.confirm-row.total { font-weight:700; color:var(--velvet); font-size:15px; }
+.confirm-row.total .price { font-family:var(--font-display); font-style:italic; color:var(--plum); }
+.confirm-actions { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+
+/* Recap sidebar */
+.recap-box { background:#fff; border:1px solid var(--border); border-radius:20px; padding:24px; position:sticky; top:calc(var(--nav-h)+20px); }
+.recap-title { font-family:var(--font-display); font-size:18px; font-weight:500; color:var(--velvet); letter-spacing:-0.01em; margin-bottom:16px; }
+.recap-salon { display:flex; align-items:center; gap:12px; padding:14px; background:var(--cream); border-radius:12px; margin-bottom:16px; }
+.recap-salon-img { width:44px; height:44px; border-radius:10px; flex-shrink:0; }
+.recap-salon-name { font-family:var(--font-display); font-size:15px; font-weight:600; color:var(--velvet); }
+.recap-salon-addr { font-size:12px; color:var(--sand); }
+.recap-row { display:flex; justify-content:space-between; font-size:13px; color:var(--velvet-2); padding:6px 0; }
+.recap-row.bold { font-weight:700; color:var(--velvet); font-size:14px; }
+.recap-price { font-family:var(--font-display); font-style:italic; color:var(--plum); font-size:15px; }
+.recap-divider { height:1px; background:var(--border); margin:14px 0; }
+.recap-note { font-size:12px; color:var(--sand); text-align:center; margin-top:12px; }
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="index.html" class="logo"><span class="logo-text">Koupé</span><div class="logo-dot"></div></a>
+    <div class="nav-spacer"></div>
+    <a href="compte.html" class="btn btn-ghost btn-sm" id="nav-account">Mon compte</a>
+  </div>
+</nav>
+
+<div class="toast-container" id="toasts"></div>
+
+<div class="flow-wrap">
+  <div class="flow-top">
+    <a href="javascript:history.back()" style="font-size:13px;color:var(--sand);text-decoration:none;">← Retour</a>
+    <div class="stepper" id="stepper">
+      <div class="step-item done" id="st-1"><div class="step-num">✓</div><span class="step-label">Prestation</span></div>
+      <div class="step-connector done" id="sc-1"></div>
+      <div class="step-item active" id="st-2"><div class="step-num">2</div><span class="step-label">Créneau</span></div>
+      <div class="step-connector" id="sc-2"></div>
+      <div class="step-item" id="st-3"><div class="step-num">3</div><span class="step-label">Confirmé</span></div>
+    </div>
+    <div></div>
+  </div>
+
+  <div class="flow-body">
+    <!-- MAIN STEPS -->
+    <div class="steps-panel">
+
+      <!-- STEP 2: Créneau (already selected, show summary) -->
+      <div class="step-section active" id="step-2">
+        <div class="step-title">Choisissez votre <em>créneau</em></div>
+
+        <label class="form-label" style="margin-bottom:10px;">Prestation sélectionnée</label>
+        <div class="service-option selected" style="margin-bottom:20px;">
+          <div>
+            <div class="service-option-name" id="sel-service-name">Coupe + Barbe</div>
+            <div class="service-option-meta" id="sel-service-meta">45 min · Barber Elite Tunis</div>
+          </div>
+          <div class="service-option-price" id="sel-service-price">45 TND</div>
+        </div>
+
+        <label class="form-label">Date</label>
+        <div class="date-selector" style="margin-bottom:18px;">
+          <div class="date-pill disabled"><div class="date-day">Lun</div><div class="date-num">28</div></div>
+          <div class="date-pill"><div class="date-day">Mar</div><div class="date-num">29</div></div>
+          <div class="date-pill active" onclick="selectDate(this,'Mer. 30 avr.')"><div class="date-day">Mer</div><div class="date-num">30</div></div>
+          <div class="date-pill" onclick="selectDate(this,'Jeu. 1 mai')"><div class="date-day">Jeu</div><div class="date-num">1</div></div>
+          <div class="date-pill" onclick="selectDate(this,'Ven. 2 mai')"><div class="date-day">Ven</div><div class="date-num">2</div></div>
+          <div class="date-pill" onclick="selectDate(this,'Sam. 3 mai')"><div class="date-day">Sam</div><div class="date-num">3</div></div>
+        </div>
+
+        <label class="form-label">Créneau disponible</label>
+        <div class="slot-grid" style="margin-bottom:24px;">
+          <div class="slot taken">09h00</div>
+          <div class="slot" onclick="selectSlot(this,'09h30')">09h30</div>
+          <div class="slot" onclick="selectSlot(this,'10h00')">10h00</div>
+          <div class="slot selected" onclick="selectSlot(this,'10h30')">10h30</div>
+          <div class="slot" onclick="selectSlot(this,'11h00')">11h00</div>
+          <div class="slot" onclick="selectSlot(this,'11h30')">11h30</div>
+          <div class="slot taken">12h00</div>
+          <div class="slot" onclick="selectSlot(this,'14h00')">14h00</div>
+          <div class="slot" onclick="selectSlot(this,'14h30')">14h30</div>
+          <div class="slot taken">15h30</div>
+          <div class="slot" onclick="selectSlot(this,'16h00')">16h00</div>
+          <div class="slot" onclick="selectSlot(this,'16h30')">16h30</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Note pour le salon (optionnel)</label>
+          <input class="form-input" type="text" placeholder="Ex: Allergie au latex, style préféré…">
+        </div>
+
+        <button class="btn btn-primary btn-block" onclick="goConfirm()">Confirmer la réservation</button>
+        <p style="text-align:center;font-size:12px;color:var(--sand);margin-top:12px;">Annulation gratuite jusqu'à 2h avant le RDV</p>
+      </div>
+
+      <!-- STEP 3: Confirmé -->
+      <div class="step-section" id="step-3">
+        <div class="confirm-wrap">
+          <div class="confirm-icon">✓</div>
+          <div class="confirm-title">Réservation confirmée !</div>
+          <div class="confirm-subtitle">Votre rendez-vous a été enregistré. Vous allez recevoir un SMS de confirmation.</div>
+
+          <div class="confirm-card">
+            <div class="confirm-row"><span>Salon</span><strong id="cf-salon">Barber Elite Tunis</strong></div>
+            <div class="confirm-row"><span>Prestation</span><strong id="cf-service">Coupe + Barbe</strong></div>
+            <div class="confirm-row"><span>Date</span><strong id="cf-date">Mer. 30 avr. 2025</strong></div>
+            <div class="confirm-row"><span>Heure</span><strong id="cf-heure">10h30</strong></div>
+            <div class="confirm-row"><span>Adresse</span><strong id="cf-adresse">Lac 1, Tunis</strong></div>
+            <div class="confirm-row total"><span>Total</span><span class="price" id="cf-prix">45 TND</span></div>
+          </div>
+
+          <div class="confirm-actions">
+            <button class="btn btn-outline" onclick="showToast('📅 Calendrier','Ajout au calendrier bientôt disponible.')">📅 Ajouter au calendrier</button>
+            <button class="btn btn-outline" onclick="showToast('🗺 Itinéraire','Navigation Google Maps bientôt disponible.')">🗺 Itinéraire</button>
+            <a href="compte.html" class="btn btn-primary">Voir mes RDV</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RECAP SIDEBAR -->
+    <div class="recap-box">
+      <div class="recap-title">Récapitulatif</div>
+      <div class="recap-salon">
+        <div class="recap-salon-img" style="background:linear-gradient(135deg,var(--plum),#6b3a45);"></div>
+        <div>
+          <div class="recap-salon-name" id="rcp-salon">Barber Elite Tunis</div>
+          <div class="recap-salon-addr" id="rcp-addr">📍 Lac 1, Tunis</div>
+        </div>
+      </div>
+      <div class="recap-row"><span>Prestation</span><span id="rcp-service">Coupe + Barbe</span></div>
+      <div class="recap-row"><span>Date</span><span id="rcp-date">Mer. 30 avr.</span></div>
+      <div class="recap-row"><span>Heure</span><span id="rcp-heure">10h30</span></div>
+      <div class="recap-row"><span>Durée</span><span id="rcp-duree">45 min</span></div>
+      <div class="recap-divider"></div>
+      <div class="recap-row bold"><span>Total</span><span class="recap-price" id="rcp-prix">45 TND</span></div>
+      <div class="recap-note">Paiement en salon · Annulation gratuite</div>
+
+      <div style="margin-top:16px;background:var(--almond-soft);border-radius:12px;padding:14px;">
+        <div style="font-size:11px;font-weight:700;color:var(--sand);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;">Vous gagnerez</div>
+        <div style="font-family:var(--font-display);font-size:20px;font-weight:600;color:var(--plum);font-style:italic;">+50 pts</div>
+        <div style="font-size:11px;color:var(--sand);">Programme fidélité Koupé</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="script/_shared.js"></script>
+<script>
+// Load booking from session
+const booking = JSON.parse(sessionStorage.getItem('booking') || '{}');
+const salon = getSalonById(booking.salonId) || SALONS[0];
+
+// Fill UI
+if (booking.service) {
+  document.getElementById('sel-service-name').textContent = booking.service;
+  document.getElementById('sel-service-meta').textContent = (booking.duree || '45 min') + ' · ' + salon.nom;
+  document.getElementById('sel-service-price').textContent = (booking.prix || 45) + ' TND';
+}
+document.getElementById('rcp-salon').textContent = salon.nom;
+document.getElementById('rcp-addr').textContent = '📍 ' + salon.quartier;
+document.getElementById('rcp-service').textContent = booking.service || 'Coupe + Barbe';
+document.getElementById('rcp-date').textContent = booking.date || 'Mer. 30 avr.';
+document.getElementById('rcp-heure').textContent = booking.heure || '10h30';
+document.getElementById('rcp-duree').textContent = booking.duree || '45 min';
+document.getElementById('rcp-prix').textContent = (booking.prix || 45) + ' TND';
+
+let selectedDate = booking.date || 'Mer. 30 avr.';
+let selectedHeure = booking.heure || '10h30';
+
+function selectDate(el, d) {
+  document.querySelectorAll('.date-pill:not(.disabled)').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  selectedDate = d;
+  document.getElementById('rcp-date').textContent = d;
+}
+
+function selectSlot(el, h) {
+  document.querySelectorAll('.slot:not(.taken)').forEach(s => s.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedHeure = h;
+  document.getElementById('rcp-heure').textContent = h;
+}
+
+function goConfirm() {
+  // Fill confirmation screen
+  document.getElementById('cf-salon').textContent = salon.nom;
+  document.getElementById('cf-service').textContent = booking.service || 'Coupe + Barbe';
+  document.getElementById('cf-date').textContent = selectedDate;
+  document.getElementById('cf-heure').textContent = selectedHeure;
+  document.getElementById('cf-adresse').textContent = salon.quartier;
+  document.getElementById('cf-prix').textContent = (booking.prix || 45) + ' TND';
+
+  // Move to step 3
+  document.getElementById('step-2').classList.remove('active');
+  document.getElementById('step-3').classList.add('active');
+
+  // Update stepper
+  document.getElementById('st-2').className = 'step-item done';
+  document.getElementById('st-2').querySelector('.step-num').textContent = '✓';
+  document.getElementById('sc-2').classList.add('done');
+  document.getElementById('st-3').className = 'step-item active';
+
+  showToast('✓ Réservation confirmée !', 'SMS de confirmation envoyé au ' + (sessionStorage.getItem('user_tel') || '+216 55 XXX XXX'));
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showToast(title, msg) {
+  const c = document.getElementById('toasts');
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.innerHTML = `<div class="toast-icon success">✓</div><div><div class="toast-title">${title}</div><div class="toast-msg">${msg}</div></div>`;
+  c.appendChild(t);
+  setTimeout(() => t.remove(), 5000);
+}
+</script>
+</body>
+</html>

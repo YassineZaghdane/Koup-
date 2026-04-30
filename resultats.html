@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Koupé — Résultats de recherche</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500;1,9..144,600&family=Inter:wght@300;400;500;600;700&family=Archivo:wght@700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_styles.css">
+<style>
+body { padding-top: var(--nav-h); }
+.search-top { background:#fff; border-bottom:1px solid var(--border); padding:14px 24px; }
+.search-top-inner { max-width:1280px; margin:0 auto; display:flex; align-items:center; gap:12px; }
+.search-input-main { flex:1; background:var(--cream); border:1px solid var(--border); border-radius:12px; padding:12px 16px; font-size:14px; font-family:var(--font-body); color:var(--velvet); max-width:440px; }
+.search-input-main:focus { outline:none; border-color:var(--plum); }
+.search-chips { display:flex; gap:8px; overflow-x:auto; scrollbar-width:none; flex:1; }
+.search-chips::-webkit-scrollbar { display:none; }
+
+.search-body { max-width:1280px; margin:0 auto; padding:24px; display:grid; grid-template-columns:220px 1fr 340px; gap:24px; }
+@media (max-width:1100px) { .search-body { grid-template-columns:200px 1fr; } .map-col { display:none; } }
+@media (max-width:700px) { .search-body { grid-template-columns:1fr; padding:16px; } .filters-col { display:none; } }
+
+/* FILTERS */
+.filters-col { position:sticky; top:calc(var(--nav-h) + 64px); height:fit-content; }
+.filter-title { font-family:var(--font-display); font-size:16px; font-weight:600; margin-bottom:18px; color:var(--velvet); }
+.filter-group { margin-bottom:24px; }
+.filter-label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--sand); margin-bottom:10px; display:block; }
+.filter-opt { display:flex; align-items:center; gap:10px; font-size:13px; cursor:pointer; padding:7px 9px; border-radius:8px; color:var(--velvet-2); transition:all 0.15s; }
+.filter-opt:hover { background:var(--cream); color:var(--velvet); }
+.filter-cb { width:16px; height:16px; border:1.5px solid var(--border); border-radius:4px; position:relative; flex-shrink:0; transition:all 0.15s; }
+.filter-opt.checked { color:var(--velvet); font-weight:500; }
+.filter-opt.checked .filter-cb { background:var(--plum); border-color:var(--plum); }
+.filter-opt.checked .filter-cb::after { content:'✓'; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); color:#fff; font-size:10px; }
+.filter-range { width:100%; accent-color:var(--plum); }
+.filter-range-val { display:flex; justify-content:space-between; font-size:12px; color:var(--sand); margin-top:4px; }
+
+/* RESULTS */
+.results-col {}
+.results-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; flex-wrap:wrap; gap:12px; }
+.results-count { font-family:var(--font-display); font-size:22px; font-weight:500; color:var(--velvet); letter-spacing:-0.01em; }
+.results-count span { color:var(--plum); font-style:italic; }
+.sort-select { font-size:13px; padding:8px 14px; border:1px solid var(--border); border-radius:100px; background:#fff; cursor:pointer; color:var(--velvet); font-family:var(--font-body); }
+.result-list { display:flex; flex-direction:column; gap:14px; }
+
+/* MAP */
+.map-col { position:sticky; top:calc(var(--nav-h) + 64px); height:calc(100vh - 180px); }
+.map-container { background:var(--cream); border:1px solid var(--border); border-radius:18px; height:100%; overflow:hidden; position:relative; }
+.map-bg { width:100%; height:100%; background:radial-gradient(circle at 25% 35%, rgba(72,37,47,.08) 0%, transparent 50%), radial-gradient(circle at 70% 65%, rgba(231,212,187,.25) 0%, transparent 45%), linear-gradient(135deg, var(--cream) 0%, var(--cream-2) 100%); position:relative; }
+.map-roads { position:absolute; inset:0; background-image:linear-gradient(45deg, transparent 48%, rgba(133,120,97,.1) 49%, rgba(133,120,97,.1) 51%, transparent 52%), linear-gradient(-45deg, transparent 48%, rgba(133,120,97,.1) 49%, rgba(133,120,97,.1) 51%, transparent 52%), linear-gradient(90deg, transparent 48%, rgba(133,120,97,.12) 49%, rgba(133,120,97,.12) 51%, transparent 52%), linear-gradient(0deg, transparent 48%, rgba(133,120,97,.12) 49%, rgba(133,120,97,.12) 51%, transparent 52%); background-size:80px 80px,80px 80px,120px 120px,120px 120px; }
+.map-pin { position:absolute; background:var(--plum); color:#fff; padding:5px 10px; border-radius:100px; font-size:11px; font-weight:700; box-shadow:0 4px 12px rgba(72,37,47,.3); cursor:pointer; transition:transform 0.2s; white-space:nowrap; }
+.map-pin::after { content:''; position:absolute; bottom:-5px; left:50%; transform:translateX(-50%); border:5px solid transparent; border-top-color:var(--plum); }
+.map-pin:hover { transform:scale(1.08); }
+.map-pin.dark { background:var(--velvet); }
+.map-pin.dark::after { border-top-color:var(--velvet); }
+.map-overlay { position:absolute; bottom:14px; left:14px; right:14px; background:#fff; border-radius:12px; padding:12px 14px; font-size:12px; color:var(--velvet-2); box-shadow:0 6px 18px rgba(41,40,30,.08); border:1px solid var(--border); }
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="index.html" class="logo"><span class="logo-text">Koupé</span><div class="logo-dot"></div></a>
+    <ul class="nav-links">
+      <li><a href="index.html">Accueil</a></li>
+      <li><a href="resultats.html" class="active">Salons</a></li>
+      <li><a href="dashboard-pro.html">Espace Pro</a></li>
+    </ul>
+    <div class="nav-spacer"></div>
+    <div class="nav-actions">
+      <a href="connexion.html" class="btn btn-ghost btn-sm">Connexion</a>
+      <a href="connexion.html#signup" class="btn btn-primary btn-sm">S'inscrire</a>
+    </div>
+  </div>
+</nav>
+
+<div class="toast-container" id="toasts"></div>
+
+<!-- SEARCH BAR TOP -->
+<div class="search-top">
+  <div class="search-top-inner">
+    <input class="search-input-main" type="text" placeholder="🔍  Coupe, barbe, massage…" id="main-search">
+    <div class="search-chips">
+      <span class="fchip active" onclick="toggleChip(this,'Tunis')">📍 Tunis</span>
+      <span class="fchip" onclick="toggleChip(this,'Aujourd\'hui')">📅 Aujourd'hui</span>
+      <span class="fchip" onclick="toggleChip(this,'Homme')">♂ Homme</span>
+      <span class="fchip" onclick="toggleChip(this,'Femme')">♀ Femme</span>
+      <span class="fchip" onclick="toggleChip(this,'Mixte')">⚥ Mixte</span>
+      <span class="fchip" onclick="toggleChip(this,'4+ étoiles')">⭐ 4+</span>
+      <span class="fchip" onclick="toggleChip(this,'< 2 km')">📍 &lt; 2 km</span>
+    </div>
+    <button class="btn btn-primary btn-sm" onclick="doSearch()">Filtrer</button>
+  </div>
+</div>
+
+<!-- BODY -->
+<div class="search-body">
+
+  <!-- FILTERS -->
+  <aside class="filters-col">
+    <div style="background:#fff;border:1px solid var(--border);border-radius:16px;padding:20px;">
+      <div class="filter-title">Filtres</div>
+
+      <div class="filter-group">
+        <span class="filter-label">Genre</span>
+        <div class="filter-opt checked" onclick="toggleFilter(this)"><div class="filter-cb"></div>♂ Homme</div>
+        <div class="filter-opt" onclick="toggleFilter(this)"><div class="filter-cb"></div>♀ Femme</div>
+        <div class="filter-opt" onclick="toggleFilter(this)"><div class="filter-cb"></div>⚥ Mixte</div>
+      </div>
+
+      <div class="filter-group">
+        <span class="filter-label">Note minimum</span>
+        <div class="filter-opt checked" onclick="toggleFilter(this)"><div class="filter-cb"></div>⭐⭐⭐⭐⭐ 5 étoiles</div>
+        <div class="filter-opt" onclick="toggleFilter(this)"><div class="filter-cb"></div>⭐⭐⭐⭐ 4+ étoiles</div>
+        <div class="filter-opt" onclick="toggleFilter(this)"><div class="filter-cb"></div>⭐⭐⭐ 3+ étoiles</div>
+      </div>
+
+      <div class="filter-group">
+        <span class="filter-label">Prix maximum</span>
+        <input type="range" class="filter-range" min="10" max="200" value="100" id="price-range" oninput="document.getElementById('price-val').textContent=this.value+' TND'">
+        <div class="filter-range-val"><span>10 TND</span><span id="price-val">100 TND</span></div>
+      </div>
+
+      <div class="filter-group">
+        <span class="filter-label">Disponibilité</span>
+        <div class="filter-opt checked" onclick="toggleFilter(this)"><div class="filter-cb"></div>Aujourd'hui</div>
+        <div class="filter-opt" onclick="toggleFilter(this)"><div class="filter-cb"></div>Cette semaine</div>
+        <div class="filter-opt" onclick="toggleFilter(this)"><div class="filter-cb"></div>Prochain créneau</div>
+      </div>
+
+      <div class="filter-group">
+        <span class="filter-label">Type de salon</span>
+        <div class="filter-opt" onclick="toggleFilter(this)"><div class="filter-cb"></div>Barbershop</div>
+        <div class="filter-opt" onclick="toggleFilter(this)"><div class="filter-cb"></div>Salon coiffure</div>
+        <div class="filter-opt" onclick="toggleFilter(this)"><div class="filter-cb"></div>Institut beauté</div>
+        <div class="filter-opt" onclick="toggleFilter(this)"><div class="filter-cb"></div>Hammam & Spa</div>
+      </div>
+
+      <button class="btn btn-outline" style="width:100%;justify-content:center;" onclick="showToast('🔄 Filtres réinitialisés','Tous les filtres ont été remis à zéro.')">Réinitialiser</button>
+    </div>
+  </aside>
+
+  <!-- RESULTS -->
+  <div class="results-col">
+    <div class="results-header">
+      <div class="results-count"><span id="result-count">0</span> salons trouvés</div>
+      <select class="sort-select" onchange="showToast('🔃 Tri modifié','Résultats triés par '+this.options[this.selectedIndex].text)">
+        <option>Recommandés</option>
+        <option>Note ↓</option>
+        <option>Prix croissant</option>
+        <option>Distance</option>
+        <option>Disponibilité</option>
+      </select>
+    </div>
+    <div class="result-list" id="result-list"></div>
+  </div>
+
+  <!-- MAP -->
+  <div class="map-col">
+    <div class="map-container">
+      <div class="map-bg">
+        <div class="map-roads"></div>
+        <div class="map-pin" style="top:28%;left:38%;" onclick="showToast('📍 Barber Elite','Lac 1, Tunis · 1.2 km')">25 TND</div>
+        <div class="map-pin dark" style="top:44%;left:55%;" onclick="showToast('📍 Salon Yasmine','Menzah 6 · 2.8 km')">35 TND</div>
+        <div class="map-pin" style="top:60%;left:28%;" onclick="showToast('📍 Hammam Sidi Bou','Médina · 4.1 km')">40 TND</div>
+        <div class="map-pin dark" style="top:35%;left:65%;" onclick="showToast('📍 Beauty Spa Hanaa','Ennasr · 3.5 km')">30 TND</div>
+        <div class="map-pin" style="top:20%;left:50%;" onclick="showToast('📍 Coiff & Co','Centre Ville · 0.8 km')">20 TND</div>
+        <div class="map-pin dark" style="top:70%;left:60%;" onclick="showToast('📍 Spa Orient','Montplaisir · 5.2 km')">50 TND</div>
+        <div class="map-overlay">
+          <div style="font-size:11px;color:var(--sand);margin-bottom:2px;">Zone affichée</div>
+          <div style="font-weight:600;color:var(--velvet);font-family:var(--font-display);">Tunis & Banlieues</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="script/_shared.js"></script>
+<script>
+// Render results
+const list = document.getElementById('result-list');
+document.getElementById('result-count').textContent = SALONS.length;
+SALONS.forEach(s => {
+  const tags = s.tags.slice(0,3).map(t => `<span class="result-service">${t}</span>`).join('') + (s.tags.length > 3 ? `<span class="result-service">+${s.tags.length-3}</span>` : '');
+  list.innerHTML += `
+    <a href="salon.html?id=${s.id}" class="result-card">
+      <div class="result-img" style="${colorStyle(s.couleur)}"></div>
+      <div class="result-body">
+        <div class="result-top">${genreBadge(s.genre, s.genreLabel)}${s.badge ? `<span class="badge ${s.badge}">${s.badgeText}</span>` : ''}</div>
+        <div class="result-name">${s.nom}</div>
+        <div class="result-meta">
+          <span>📍 ${s.quartier}</span>
+          <span>${s.distance}</span>
+          <span><strong>${s.note}★</strong> (${s.nbAvis} avis)</span>
+          <span>À partir de <strong>${s.prixMin} TND</strong></span>
+        </div>
+        <div class="result-services">${tags}</div>
+      </div>
+      <div class="result-cta">
+        <span class="result-next">Prochain créneau</span>
+        <span class="result-time">${s.prochainCreneau.split(' ')[1] || s.prochainCreneau}</span>
+        <span class="result-date-txt">${s.prochainCreneau.split(' ')[0] || ''}</span>
+        <span class="btn btn-primary btn-sm" style="margin-top:6px;">Réserver</span>
+      </div>
+    </a>`;
+});
+
+function toggleChip(el, label) {
+  el.classList.toggle('active');
+  showToast('🔍 Filtre modifié', (el.classList.contains('active') ? 'Ajouté : ' : 'Retiré : ') + label);
+}
+function toggleFilter(el) {
+  el.classList.toggle('checked');
+}
+function doSearch() {
+  showToast('🔍 Recherche mise à jour','Résultats filtrés selon vos critères.');
+}
+function showToast(title, msg) {
+  const c = document.getElementById('toasts');
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.innerHTML = `<div class="toast-icon info">🔔</div><div><div class="toast-title">${title}</div><div class="toast-msg">${msg}</div></div>`;
+  c.appendChild(t);
+  setTimeout(() => t.remove(), 3500);
+}
+</script>
+</body>
+</html>

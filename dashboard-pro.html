@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Koupé Pro — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500;1,9..144,600&family=Inter:wght@300;400;500;600;700&family=Archivo:wght@700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_styles.css">
+<style>
+*, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+body { display:flex; min-height:100vh; background:var(--cream); font-family:var(--font-body); overflow-x:hidden; }
+
+/* SIDEBAR */
+.sidebar { width:240px; min-height:100vh; background:var(--velvet); flex-shrink:0; display:flex; flex-direction:column; position:sticky; top:0; height:100vh; overflow-y:auto; }
+.sidebar::-webkit-scrollbar { display:none; }
+.sidebar-logo { padding:22px 18px 30px; border-bottom:1px solid rgba(231,212,187,.1); }
+.sidebar-logo .logo-text { color:#fff; font-size:26px; }
+.sidebar-logo .logo-dot { background:var(--almond); }
+.sidebar-badge { font-size:10px; text-transform:uppercase; letter-spacing:.1em; color:rgba(231,212,187,.5); font-weight:700; margin-top:6px; }
+
+.sidebar-user { padding:18px; display:flex; align-items:center; gap:10px; border-bottom:1px solid rgba(231,212,187,.08); }
+.sidebar-avatar { width:36px; height:36px; border-radius:50%; background:var(--plum); color:var(--almond); font-family:var(--font-display); font-size:13px; font-weight:600; display:flex; align-items:center; justify-content:center; }
+.sidebar-user-name { font-size:13px; color:#fff; font-weight:600; }
+.sidebar-user-role { font-size:11px; color:rgba(255,255,255,.45); }
+
+.pro-menu-section { font-size:10px; text-transform:uppercase; letter-spacing:.12em; color:rgba(231,212,187,.3); padding:16px 16px 6px; font-weight:700; }
+.pro-menu-item { display:flex; align-items:center; gap:10px; padding:10px 14px; border-radius:10px; color:rgba(255,255,255,.65); font-size:13px; cursor:pointer; transition:all .2s; text-decoration:none; margin:1px 6px; }
+.pro-menu-item:hover { background:rgba(231,212,187,.07); color:#fff; }
+.pro-menu-item.active { background:var(--plum); color:#fff; }
+.pro-menu-icon { font-size:15px; width:20px; flex-shrink:0; text-align:center; }
+
+.sidebar-footer { margin-top:auto; padding:16px; border-top:1px solid rgba(231,212,187,.08); }
+.sidebar-client-link { display:flex; align-items:center; gap:8px; font-size:12px; color:rgba(255,255,255,.4); text-decoration:none; transition:color .2s; padding:8px; border-radius:8px; }
+.sidebar-client-link:hover { color:var(--almond); background:rgba(231,212,187,.06); }
+
+/* MAIN */
+.pro-main { flex:1; padding:30px 32px; overflow-x:hidden; }
+@media (max-width:900px) { .sidebar { display:none; } .pro-main { padding:20px 16px; } body { flex-direction:column; } }
+
+/* TOPBAR */
+.pro-topbar { display:flex; justify-content:space-between; align-items:center; margin-bottom:28px; flex-wrap:wrap; gap:14px; }
+.pro-title-wrap h1 { font-family:var(--font-display); font-size:clamp(22px,3vw,32px); font-weight:500; letter-spacing:-.025em; margin-bottom:2px; color:var(--velvet); }
+.pro-title-wrap h1 em { font-style:italic; color:var(--plum); }
+.pro-title-wrap p { font-size:13px; color:var(--sand); }
+.pro-topbar-actions { display:flex; gap:8px; align-items:center; }
+.pro-search { background:#fff; border:1px solid var(--border); padding:9px 16px; border-radius:100px; font-size:13px; color:var(--sand); display:flex; align-items:center; gap:8px; min-width:200px; }
+.pro-avatar { width:38px; height:38px; border-radius:50%; background:var(--plum); color:var(--almond); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:600; font-family:var(--font-display); cursor:pointer; }
+
+/* STATS GRID */
+.stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:26px; }
+@media (max-width:900px) { .stats-grid { grid-template-columns:repeat(2,1fr); } }
+.stat-card { background:#fff; border:1px solid var(--border); border-radius:16px; padding:20px; transition:all .2s; cursor:default; }
+.stat-card:hover { border-color:var(--plum); transform:translateY(-2px); }
+.stat-label { font-size:11px; color:var(--sand); text-transform:uppercase; letter-spacing:.08em; font-weight:600; margin-bottom:8px; }
+.stat-value { font-family:var(--font-display); font-size:30px; font-weight:500; line-height:1; color:var(--velvet); letter-spacing:-.02em; font-style:italic; }
+.stat-trend { font-size:11px; color:#27ae60; font-weight:600; margin-top:5px; }
+.stat-trend.down { color:#c0392b; }
+
+/* TWO COL */
+.pro-cols { display:grid; grid-template-columns:1fr 320px; gap:20px; }
+@media (max-width:1000px) { .pro-cols { grid-template-columns:1fr; } }
+
+/* PRO CARD */
+.pro-card { background:#fff; border:1px solid var(--border); border-radius:18px; padding:22px; margin-bottom:20px; }
+.pro-card-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+.pro-card-title { font-family:var(--font-display); font-size:18px; font-weight:500; color:var(--velvet); letter-spacing:-.01em; }
+.pro-card-title em { font-style:italic; color:var(--plum); }
+.pro-card-link { font-size:12px; color:var(--plum); font-weight:500; cursor:pointer; }
+
+/* AGENDA */
+.agenda-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+.agenda-date-title { font-family:var(--font-display); font-size:16px; font-weight:600; color:var(--velvet); }
+.agenda-nav { display:flex; gap:6px; }
+.agenda-nav-btn { width:32px; height:32px; border:1px solid var(--border); background:#fff; border-radius:8px; cursor:pointer; font-size:13px; color:var(--velvet); transition:all .2s; }
+.agenda-nav-btn:hover { border-color:var(--plum); }
+
+.agenda-row { display:grid; grid-template-columns:56px 1fr; gap:10px; align-items:start; padding:10px 0; border-top:1px solid var(--border-soft); }
+.agenda-row:first-of-type { border-top:none; }
+.agenda-time-txt { font-size:12px; color:var(--sand); font-weight:600; padding-top:10px; font-family:var(--font-display); font-style:italic; }
+.agenda-slot { min-height:38px; padding:10px 14px; border-radius:10px; border:1px dashed var(--border); color:var(--sand-light); font-size:12px; font-style:italic; display:flex; align-items:center; }
+.agenda-slot.booked { border:none; background:var(--almond-soft); color:var(--plum); font-style:normal; }
+.agenda-slot.booked-velvet { background:var(--velvet); color:var(--almond); border:none; }
+.agenda-slot.booked-plum { background:var(--plum); color:#fff; border:none; }
+.agenda-slot.pause-slot { background:var(--cream); color:var(--sand); border:1px solid var(--border-soft); font-style:italic; }
+.ag-client { font-weight:600; margin-right:8px; }
+.ag-service { opacity:.75; font-size:11px; }
+
+/* ACTIVITY */
+.activity-item { display:flex; gap:12px; align-items:flex-start; padding:10px 0; border-bottom:1px solid var(--border-soft); }
+.activity-item:last-child { border-bottom:none; }
+.activity-ico { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0; }
+.activity-ico.new { background:var(--almond); color:var(--plum); }
+.activity-ico.check { background:var(--plum-soft); color:var(--plum); }
+.activity-ico.review { background:var(--border); color:var(--velvet); }
+.activity-txt { font-size:13px; line-height:1.5; color:var(--velvet-2); }
+.activity-txt strong { font-weight:600; color:var(--velvet); }
+.activity-time { font-size:11px; color:var(--sand); margin-top:2px; }
+
+/* BOOST & RATING */
+.boost-card { background:linear-gradient(135deg,var(--plum) 0%,var(--plum-dark) 100%); border-radius:16px; padding:20px; color:#fff; margin-bottom:20px; }
+.boost-title { font-family:var(--font-display); font-size:17px; font-weight:500; margin-bottom:6px; }
+.boost-title em { font-style:italic; color:var(--almond); }
+.boost-desc { font-size:13px; color:rgba(255,255,255,.7); margin-bottom:14px; line-height:1.5; }
+
+.rating-card-inner { display:flex; align-items:center; gap:16px; }
+.rating-big { font-family:var(--font-display); font-size:48px; font-weight:500; color:var(--plum); line-height:1; font-style:italic; }
+
+/* MOBILE TOP NAV */
+.mobile-top-nav { display:none; background:var(--velvet); padding:14px 18px; position:sticky; top:0; z-index:100; }
+@media (max-width:900px) { .mobile-top-nav { display:flex; align-items:center; justify-content:space-between; } }
+.mobile-nav-logo .logo-text { color:#fff; font-size:22px; }
+.mobile-nav-logo .logo-dot { background:var(--almond); }
+
+/* SECTION PANELS */
+.pro-section { display:none; }
+.pro-section.active { display:block; }
+.list-table { width:100%; border-collapse:collapse; }
+.list-table th { text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--sand); padding:10px 8px; border-bottom:1px solid var(--border); }
+.list-table td { padding:12px 8px; border-bottom:1px solid var(--border-soft); font-size:13px; color:var(--velvet-2); }
+.list-table td strong { color:var(--velvet); }
+.status-pill { padding:4px 10px; border-radius:100px; font-size:11px; font-weight:600; display:inline-block; }
+.status-pill.ok { background:var(--plum-soft); color:var(--plum); }
+.status-pill.pending { background:var(--almond-soft); color:var(--velvet); }
+.status-pill.cancel { background:#f9e4e4; color:#a93f3f; }
+</style>
+</head>
+<body>
+
+<!-- MOBILE TOP NAV -->
+<div class="mobile-top-nav">
+  <a href="index.html" class="logo mobile-nav-logo"><span class="logo-text">Koupé</span><div class="logo-dot"></div></a>
+  <div style="display:flex;gap:8px;">
+    <a href="compte.html" class="btn btn-ghost btn-sm" style="color:rgba(255,255,255,.7);">Espace client</a>
+    <button class="btn btn-almond btn-sm" onclick="showToast('➕ Nouveau RDV','Sélectionnez un client et un créneau.')">+ RDV</button>
+  </div>
+</div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo"><span class="logo-text">Koupé</span><div class="logo-dot"></div></div>
+    <div class="sidebar-badge">Espace Pro</div>
+  </div>
+
+  <div class="sidebar-user">
+    <div class="sidebar-avatar">ZB</div>
+    <div>
+      <div class="sidebar-user-name">Zakaria Bensalem</div>
+      <div class="sidebar-user-role">Barber Elite Tunis</div>
+    </div>
+  </div>
+
+  <div class="pro-menu-section">Principal</div>
+  <a href="#" class="pro-menu-item active" onclick="switchSection('dashboard',this)"><span class="pro-menu-icon">📊</span> Tableau de bord</a>
+  <a href="#" class="pro-menu-item" onclick="switchSection('agenda',this)"><span class="pro-menu-icon">📅</span> Agenda</a>
+  <a href="#" class="pro-menu-item" onclick="switchSection('clients',this)"><span class="pro-menu-icon">👥</span> Clients</a>
+  <a href="#" class="pro-menu-item" onclick="switchSection('reservations',this)"><span class="pro-menu-icon">🗓️</span> Réservations</a>
+  <a href="#" class="pro-menu-item" onclick="switchSection('services',this)"><span class="pro-menu-icon">✂️</span> Services & Prix</a>
+  <a href="#" class="pro-menu-item" onclick="switchSection('equipe',this)"><span class="pro-menu-icon">🧑‍🤝‍🧑</span> Équipe</a>
+
+  <div class="pro-menu-section">Insights</div>
+  <a href="#" class="pro-menu-item" onclick="switchSection('stats',this)"><span class="pro-menu-icon">📈</span> Statistiques</a>
+  <a href="#" class="pro-menu-item" onclick="switchSection('avis',this)"><span class="pro-menu-icon">⭐</span> Avis clients</a>
+
+  <div class="pro-menu-section">Croissance</div>
+  <a href="#" class="pro-menu-item" onclick="switchSection('marketing',this)"><span class="pro-menu-icon">📣</span> Marketing</a>
+  <a href="#" class="pro-menu-item" onclick="switchSection('abonnement',this)"><span class="pro-menu-icon">💎</span> Abonnement</a>
+  <a href="#" class="pro-menu-item" onclick="switchSection('params',this)"><span class="pro-menu-icon">⚙️</span> Paramètres</a>
+
+  <div class="sidebar-footer">
+    <a href="index.html" class="sidebar-client-link">
+      <span>↗</span> Voir notre profil salon
+    </a>
+    <a href="index.html" class="sidebar-client-link" style="margin-top:4px;">
+      <span>←</span> Retour au site Koupé
+    </a>
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="pro-main">
+  <div class="toast-container" id="toasts"></div>
+
+  <!-- TOPBAR -->
+  <div class="pro-topbar">
+    <div class="pro-title-wrap">
+      <h1>Bonjour, <em id="pro-name">Zakaria</em> 👋</h1>
+      <p id="pro-date">Mercredi 30 avril 2025 · Barber Elite Tunis</p>
+    </div>
+    <div class="pro-topbar-actions">
+      <div class="pro-search">🔍 Rechercher un client…</div>
+      <button class="btn btn-primary" onclick="showToast('➕ Nouveau RDV','Sélectionnez un client et un créneau.')">+ Nouveau RDV</button>
+      <div class="pro-avatar" onclick="showToast('👤 Profil Pro','Accédez à vos paramètres.')">ZB</div>
+    </div>
+  </div>
+
+  <section class="pro-section active" id="section-dashboard">
+  <!-- STATS -->
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-label">RDV aujourd'hui</div><div class="stat-value" id="s-rdv">14</div><div class="stat-trend">↑ +3 vs hier</div></div>
+    <div class="stat-card"><div class="stat-label">CA ce mois (TND)</div><div class="stat-value" id="s-ca">3 240</div><div class="stat-trend">↑ +18% vs mois dernier</div></div>
+    <div class="stat-card"><div class="stat-label">Nouveaux clients</div><div class="stat-value" id="s-clients">28</div><div class="stat-trend down">↓ -2 vs semaine passée</div></div>
+    <div class="stat-card"><div class="stat-label">Taux remplissage</div><div class="stat-value" id="s-taux">87%</div><div class="stat-trend">↑ Optimal</div></div>
+  </div>
+
+  <!-- TWO COLUMNS -->
+  <div class="pro-cols">
+
+    <!-- LEFT: Agenda -->
+    <div>
+      <div class="pro-card">
+        <div class="pro-card-header">
+          <div class="pro-card-title">Agenda <em>du jour</em></div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="agenda-date-title" id="agenda-date">Mer. 30 avril</div>
+            <div class="agenda-nav">
+              <button class="agenda-nav-btn" onclick="showToast('📅 Navigation','Naviguez entre les jours.')">←</button>
+              <button class="agenda-nav-btn" onclick="showToast('📅 Navigation','Naviguez entre les jours.')">→</button>
+            </div>
+          </div>
+        </div>
+        <div id="agenda-list"></div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Activity + Boost + Rating -->
+    <div>
+      <div class="pro-card" style="margin-bottom:20px;">
+        <div class="pro-card-header">
+          <div class="pro-card-title">Activité <em>récente</em></div>
+          <span class="pro-card-link" onclick="showToast('📋 Historique','Voir tout l\'historique d\'activité.')">Voir tout</span>
+        </div>
+        <div id="activity-list"></div>
+      </div>
+
+      <div class="boost-card">
+        <div class="boost-title">Koupé <em>Boost</em></div>
+        <div class="boost-desc">Apparaissez en 1ère position dans les résultats de votre zone. +40% de RDV en moyenne.</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn btn-almond btn-sm" onclick="showToast('🚀 Koupé Boost','Notre équipe vous contactera sous 24h pour activer Boost.')">Activer le Boost</button>
+          <button class="btn" style="color:rgba(255,255,255,.7);font-size:12px;padding:7px 14px;" onclick="showToast('📊 Boost','Découvrez les statistiques Boost.')">En savoir plus</button>
+        </div>
+      </div>
+
+      <div class="pro-card">
+        <div class="pro-card-header">
+          <div class="pro-card-title">Note <em>moyenne</em></div>
+        </div>
+        <div class="rating-card-inner">
+          <div>
+            <div class="rating-big">4.9</div>
+            <div class="stars" style="font-size:16px;letter-spacing:2px;">★★★★★</div>
+            <div style="font-size:12px;color:var(--sand);margin-top:4px;">142 avis vérifiés</div>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
+            <div style="display:flex;gap:8px;align-items:center;font-size:11px;color:var(--sand);">
+              <span>5★</span><div style="flex:1;height:5px;background:var(--border);border-radius:100px;overflow:hidden;"><div style="width:78%;height:100%;background:var(--plum);border-radius:100px;"></div></div><span>78%</span>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;font-size:11px;color:var(--sand);">
+              <span>4★</span><div style="flex:1;height:5px;background:var(--border);border-radius:100px;overflow:hidden;"><div style="width:15%;height:100%;background:var(--plum);border-radius:100px;"></div></div><span>15%</span>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;font-size:11px;color:var(--sand);">
+              <span>3★</span><div style="flex:1;height:5px;background:var(--border);border-radius:100px;overflow:hidden;"><div style="width:5%;height:100%;background:var(--plum);border-radius:100px;"></div></div><span>5%</span>
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-outline btn-sm" style="margin-top:14px;" onclick="showToast('⭐ Avis','Gestion des avis bientôt disponible.')">Gérer les avis</button>
+      </div>
+    </div>
+  </div>
+  </section>
+
+  <section class="pro-section" id="section-clients">
+    <div class="pro-card">
+      <div class="pro-card-header">
+        <div class="pro-card-title">Liste des <em>clients</em></div>
+        <button class="btn btn-primary btn-sm" onclick="showToast('👤 Nouveau client','Formulaire client ouvert.')">+ Ajouter</button>
+      </div>
+      <table class="list-table">
+        <thead>
+          <tr>
+            <th>Client</th>
+            <th>Téléphone</th>
+            <th>Visites</th>
+            <th>Dernière visite</th>
+            <th>Préférence</th>
+            <th>Statut</th>
+          </tr>
+        </thead>
+        <tbody id="clients-table"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="pro-section" id="section-reservations">
+    <div class="pro-card">
+      <div class="pro-card-header">
+        <div class="pro-card-title">Réservations du <em>jour</em></div>
+        <button class="btn btn-outline btn-sm" onclick="showToast('🔄 Synchronisation','Réservations mises à jour.')">Actualiser</button>
+      </div>
+      <table class="list-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Client</th>
+            <th>Prestation</th>
+            <th>Date</th>
+            <th>Heure</th>
+            <th>Montant</th>
+            <th>Statut</th>
+          </tr>
+        </thead>
+        <tbody id="reservations-table"></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<script src="script/_shared.js"></script>
+<script>
+// Fill agenda
+const agendaList = document.getElementById('agenda-list');
+PRO_DEMO.agenda.forEach(slot => {
+  let slotHtml = '';
+  if (slot.statut === 'free') {
+    slotHtml = `<div class="agenda-slot">Créneau libre <button class="btn btn-outline btn-sm" style="margin-left:auto;font-size:11px;" onclick="showToast('📝 Blocage','Créneau bloqué manuellement.')">+ Bloquer</button></div>`;
+  } else if (slot.statut === 'pause') {
+    slotHtml = `<div class="agenda-slot pause-slot">Pause déjeuner</div>`;
+  } else {
+    const cls = slot.statut;
+    slotHtml = `<div class="agenda-slot ${cls}"><span class="ag-client">${slot.client}</span><span class="ag-service">${slot.service} · ${slot.duree} min</span><button class="btn btn-ghost btn-sm" style="margin-left:auto;font-size:11px;${slot.statut.includes('velvet')||slot.statut.includes('plum')?'color:#fff;':''}" onclick="showToast('📋 RDV','Détails de ${slot.client}')">Détails</button></div>`;
+  }
+  agendaList.innerHTML += `
+    <div class="agenda-row">
+      <div class="agenda-time-txt">${slot.heure}</div>
+      ${slotHtml}
+    </div>`;
+});
+
+// Fill activity
+const actList = document.getElementById('activity-list');
+PRO_DEMO.activite.forEach(a => {
+  const ico = { new:'📥', check:'✓', review:'⭐' }[a.type] || '•';
+  actList.innerHTML += `
+    <div class="activity-item">
+      <div class="activity-ico ${a.type}">${ico}</div>
+      <div><div class="activity-txt">${a.texte}</div><div class="activity-time">${a.temps}</div></div>
+    </div>`;
+});
+
+const clientsTable = document.getElementById('clients-table');
+PRO_DEMO.clients.forEach(c => {
+  const cls = c.statut === 'VIP' ? 'ok' : c.statut === 'Nouveau' ? 'pending' : 'ok';
+  clientsTable.innerHTML += `
+    <tr>
+      <td><strong>${c.nom}</strong></td>
+      <td>${c.tel}</td>
+      <td>${c.visites}</td>
+      <td>${c.derniereVisite}</td>
+      <td>${c.preference}</td>
+      <td><span class="status-pill ${cls}">${c.statut}</span></td>
+    </tr>`;
+});
+
+const reservationsTable = document.getElementById('reservations-table');
+PRO_DEMO.reservations.forEach(r => {
+  const cls = r.statut === 'Confirmé' ? 'ok' : r.statut === 'En attente' ? 'pending' : 'cancel';
+  reservationsTable.innerHTML += `
+    <tr>
+      <td><strong>${r.id}</strong></td>
+      <td>${r.client}</td>
+      <td>${r.service}</td>
+      <td>${r.date}</td>
+      <td>${r.heure}</td>
+      <td>${r.montant} TND</td>
+      <td><span class="status-pill ${cls}">${r.statut}</span></td>
+    </tr>`;
+});
+
+function switchSection(section, el) {
+  document.querySelectorAll('.pro-menu-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.pro-section').forEach(s => s.classList.remove('active'));
+
+  const map = {
+    dashboard: 'section-dashboard',
+    agenda: 'section-dashboard',
+    clients: 'section-clients',
+    reservations: 'section-reservations',
+  };
+  const target = document.getElementById(map[section] || 'section-dashboard');
+  target.classList.add('active');
+
+  const names = { dashboard:'Tableau de bord', agenda:'Agenda', clients:'Clients', reservations:'Réservations', services:'Services & Prix', equipe:'Équipe', stats:'Statistiques', avis:'Avis clients', marketing:'Marketing', abonnement:'Abonnement', params:'Paramètres' };
+  if (!map[section]) {
+    showToast('📋 ' + (names[section] || section), 'Section ' + (names[section] || section) + ' bientôt disponible.');
+  }
+}
+
+function showToast(title, msg) {
+  const c = document.getElementById('toasts');
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.innerHTML = `<div class="toast-icon info">🔔</div><div><div class="toast-title">${title}</div><div class="toast-msg">${msg}</div></div>`;
+  c.appendChild(t);
+  setTimeout(() => t.remove(), 3500);
+}
+</script>
+</body>
+</html>

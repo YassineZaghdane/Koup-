@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Koupé — Fiche salon</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500;1,9..144,600&family=Inter:wght@300;400;500;600;700&family=Archivo:wght@700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_styles.css">
+<style>
+body { padding-top: var(--nav-h); }
+.detail-hero { height:320px; position:relative; }
+.detail-hero::after { content:''; position:absolute; inset:0; background:linear-gradient(to top,rgba(0,0,0,0.45) 0%,transparent 40%); }
+.detail-back { position:absolute; top:20px; left:20px; background:rgba(255,255,255,.92); padding:8px 16px; border-radius:100px; font-size:13px; font-weight:500; cursor:pointer; z-index:2; color:var(--velvet); text-decoration:none; backdrop-filter:blur(8px); }
+.detail-actions { position:absolute; top:20px; right:20px; display:flex; gap:8px; z-index:2; }
+.detail-action { background:rgba(255,255,255,.92); width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:15px; backdrop-filter:blur(8px); color:var(--velvet); transition:all 0.2s; border:none; }
+.detail-action:hover { transform:scale(1.08); background:#fff; }
+.detail-photos-btn { position:absolute; bottom:18px; right:18px; background:rgba(0,0,0,.55); color:#fff; padding:7px 14px; border-radius:100px; font-size:12px; z-index:2; cursor:pointer; border:none; backdrop-filter:blur(8px); }
+
+.detail-body { max-width:1200px; margin:0 auto; padding:36px 24px 80px; display:grid; grid-template-columns:1fr 360px; gap:44px; }
+@media (max-width:900px) { .detail-body { grid-template-columns:1fr; } }
+@media (max-width:600px) { .detail-body { padding:24px 16px 60px; } }
+
+.detail-head { margin-bottom:26px; padding-bottom:24px; border-bottom:1px solid var(--border); }
+.detail-badges { display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap; }
+.detail-name { font-family:var(--font-display); font-size:clamp(28px,4vw,42px); font-weight:500; letter-spacing:-0.025em; margin-bottom:12px; color:var(--velvet); }
+.detail-meta-row { display:flex; gap:18px; flex-wrap:wrap; font-size:14px; color:var(--velvet-2); margin-bottom:6px; }
+.detail-meta-item { display:flex; align-items:center; gap:6px; }
+.detail-meta-item strong { color:var(--plum); font-family:var(--font-display); font-style:italic; font-size:15px; }
+
+.detail-section { margin-bottom:34px; }
+.detail-section-title { font-family:var(--font-display); font-size:21px; font-weight:500; margin-bottom:16px; letter-spacing:-0.01em; color:var(--velvet); }
+.detail-section-title em { font-style:italic; color:var(--plum); }
+.detail-about { font-size:15px; color:var(--velvet-2); line-height:1.75; }
+
+.service-cat-label { font-family:var(--font-display); font-size:17px; font-weight:500; margin:22px 0 10px; display:flex; align-items:center; gap:10px; color:var(--velvet); font-style:italic; }
+.service-cat-label::before { content:''; flex:0 0 20px; height:2px; background:var(--plum); }
+.service-row { display:flex; justify-content:space-between; align-items:center; padding:16px 0; border-bottom:1px solid var(--border-soft); gap:18px; }
+.service-row:last-child { border-bottom:none; }
+.service-name { font-size:15px; font-weight:600; color:var(--velvet); margin-bottom:3px; }
+.service-desc { font-size:12px; color:var(--sand); }
+.service-right { display:flex; align-items:center; gap:14px; flex-shrink:0; }
+.service-price { font-family:var(--font-display); font-size:17px; font-weight:600; color:var(--velvet); font-style:italic; }
+.service-dur { font-size:12px; color:var(--sand); }
+.service-book-btn { background:var(--plum); color:#fff; padding:8px 16px; border-radius:100px; border:none; font-size:12px; font-weight:600; cursor:pointer; transition:background 0.2s; }
+.service-book-btn:hover { background:var(--plum-dark); }
+
+.reviews-summary { display:flex; gap:22px; align-items:center; margin-bottom:20px; padding:22px; background:var(--cream); border-radius:16px; border:1px solid var(--border); flex-wrap:wrap; }
+.rs-score { font-family:var(--font-display); font-size:50px; font-weight:500; color:var(--plum); line-height:1; font-style:italic; }
+.rs-stars { color:var(--plum); font-size:14px; margin:6px 0; letter-spacing:2px; }
+.rs-count { font-size:12px; color:var(--sand); }
+.rs-bars { flex:1; min-width:180px; display:flex; flex-direction:column; gap:5px; }
+.rs-bar { display:flex; align-items:center; gap:8px; font-size:11px; color:var(--sand); }
+.rs-bar-track { flex:1; height:5px; background:var(--border); border-radius:100px; overflow:hidden; }
+.rs-bar-fill { height:100%; background:var(--plum); border-radius:100px; }
+
+.review-list { display:flex; flex-direction:column; gap:12px; }
+.review-card { padding:18px; border:1px solid var(--border); border-radius:14px; background:#fff; }
+.review-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:8px; }
+.review-author { display:flex; align-items:center; gap:10px; }
+.r-avatar { width:34px; height:34px; border-radius:50%; background:var(--plum); color:var(--almond); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600; font-family:var(--font-display); }
+.review-name { font-size:13px; font-weight:600; color:var(--velvet); }
+.review-date { font-size:11px; color:var(--sand); }
+.review-text { font-size:14px; color:var(--velvet-2); line-height:1.65; }
+
+/* BOOKING SIDEBAR */
+.booking-side { background:#fff; border:1px solid var(--border); border-radius:20px; padding:24px; position:sticky; top:calc(var(--nav-h)+20px); box-shadow:0 10px 36px rgba(41,40,30,.06); }
+.booking-title { font-family:var(--font-display); font-size:20px; font-weight:500; margin-bottom:4px; color:var(--velvet); letter-spacing:-0.01em; }
+.booking-subtitle { font-size:13px; color:var(--sand); margin-bottom:22px; }
+.service-select-wrap { margin-bottom:18px; }
+.service-select { width:100%; padding:12px 16px; border:1px solid var(--border); border-radius:12px; font-size:14px; font-family:var(--font-body); background:#fff; color:var(--velvet); cursor:pointer; }
+.service-select:focus { outline:none; border-color:var(--plum); }
+.booking-divider { height:1px; background:var(--border); margin:18px 0; }
+.booking-row { display:flex; justify-content:space-between; font-size:14px; color:var(--velvet-2); padding:5px 0; }
+.booking-row.total { font-weight:700; color:var(--velvet); font-size:15px; }
+.booking-price { font-family:var(--font-display); font-style:italic; color:var(--plum); }
+.booking-info-txt { margin-top:12px; font-size:12px; color:var(--sand); text-align:center; }
+
+/* Modal service booking */
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="index.html" class="logo"><span class="logo-text">Koupé</span><div class="logo-dot"></div></a>
+    <ul class="nav-links">
+      <li><a href="index.html">Accueil</a></li>
+      <li><a href="resultats.html">Salons</a></li>
+      <li><a href="dashboard-pro.html">Espace Pro</a></li>
+    </ul>
+    <div class="nav-spacer"></div>
+    <div class="nav-actions">
+      <a href="connexion.html" class="btn btn-ghost btn-sm">Connexion</a>
+      <a href="connexion.html#signup" class="btn btn-primary btn-sm">S'inscrire</a>
+    </div>
+  </div>
+</nav>
+
+<div class="toast-container" id="toasts"></div>
+
+<!-- HERO (dynamique) -->
+<div id="detail-hero" class="detail-hero">
+  <a href="resultats.html" class="detail-back">← Retour</a>
+  <div class="detail-actions">
+    <button class="detail-action" id="fav-btn" onclick="toggleFav()" title="Ajouter aux favoris">♡</button>
+    <button class="detail-action" onclick="shareModal()" title="Partager">↗</button>
+  </div>
+  <button class="detail-photos-btn" onclick="showToast('📸 Photos','Galerie photo bientôt disponible.')">📸 Voir les photos</button>
+</div>
+
+<!-- BODY -->
+<div class="detail-body">
+  <div class="detail-main" id="detail-main">
+    <!-- injected by JS -->
+  </div>
+
+  <!-- BOOKING SIDEBAR -->
+  <div>
+    <div class="booking-side">
+      <div class="booking-title">Réserver</div>
+      <div class="booking-subtitle" id="booking-sub">Choisissez une prestation et un créneau</div>
+
+      <div class="service-select-wrap">
+        <label class="form-label">Prestation</label>
+        <select class="service-select" id="service-picker" onchange="updateBooking()">
+          <option value="">Choisir une prestation…</option>
+        </select>
+      </div>
+
+      <label class="form-label">Date</label>
+      <div class="date-selector" style="margin-bottom:16px;">
+        <div class="date-pill disabled"><div class="date-day">Lun</div><div class="date-num">28</div></div>
+        <div class="date-pill"><div class="date-day">Mar</div><div class="date-num">29</div></div>
+        <div class="date-pill active" id="dp-0" onclick="selectDate(this,'Mer. 30 avr.')"><div class="date-day">Mer</div><div class="date-num">30</div></div>
+        <div class="date-pill" id="dp-1" onclick="selectDate(this,'Jeu. 1 mai')"><div class="date-day">Jeu</div><div class="date-num">1</div></div>
+        <div class="date-pill" id="dp-2" onclick="selectDate(this,'Ven. 2 mai')"><div class="date-day">Ven</div><div class="date-num">2</div></div>
+        <div class="date-pill" id="dp-3" onclick="selectDate(this,'Sam. 3 mai')"><div class="date-day">Sam</div><div class="date-num">3</div></div>
+        <div class="date-pill" id="dp-4" onclick="selectDate(this,'Dim. 4 mai')"><div class="date-day">Dim</div><div class="date-num">4</div></div>
+      </div>
+
+      <label class="form-label">Créneau disponible</label>
+      <div class="slot-grid" style="margin-bottom:16px;">
+        <div class="slot taken">09h00</div>
+        <div class="slot" onclick="selectSlot(this,'09h30')">09h30</div>
+        <div class="slot" onclick="selectSlot(this,'10h00')">10h00</div>
+        <div class="slot selected" id="selected-slot" onclick="selectSlot(this,'10h30')">10h30</div>
+        <div class="slot" onclick="selectSlot(this,'11h00')">11h00</div>
+        <div class="slot" onclick="selectSlot(this,'11h30')">11h30</div>
+        <div class="slot taken">12h00</div>
+        <div class="slot" onclick="selectSlot(this,'14h00')">14h00</div>
+        <div class="slot" onclick="selectSlot(this,'14h30')">14h30</div>
+        <div class="slot" onclick="selectSlot(this,'15h00')">15h00</div>
+        <div class="slot taken">15h30</div>
+        <div class="slot" onclick="selectSlot(this,'16h00')">16h00</div>
+      </div>
+
+      <div id="booking-summary" class="hidden">
+        <div class="booking-divider"></div>
+        <div class="booking-row"><span>Prestation</span><span id="bk-service">–</span></div>
+        <div class="booking-row"><span>Date</span><span id="bk-date">Mer. 30 avr.</span></div>
+        <div class="booking-row"><span>Heure</span><span id="bk-heure">10h30</span></div>
+        <div class="booking-row"><span>Durée</span><span id="bk-duree">–</span></div>
+        <div class="booking-divider"></div>
+        <div class="booking-row total"><span>Total</span><span class="booking-price" id="bk-prix">–</span></div>
+      </div>
+
+      <button class="btn btn-primary btn-block" style="margin-top:16px;" onclick="goReservation()">Confirmer le créneau</button>
+      <div class="booking-info-txt">Annulation gratuite jusqu'à 2h avant</div>
+    </div>
+  </div>
+</div>
+
+<!-- BOOKING MODAL (connexion required) -->
+<div class="modal-overlay hidden" id="login-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Connexion requise</div>
+      <button class="modal-close" onclick="document.getElementById('login-modal').classList.add('hidden')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:14px;color:var(--velvet-2);margin-bottom:20px;">Pour réserver, vous devez être connecté à votre compte Koupé.</p>
+      <a href="connexion.html" class="btn btn-primary btn-block" style="margin-bottom:10px;">Se connecter</a>
+      <a href="connexion.html#signup" class="btn btn-outline btn-block">Créer un compte</a>
+      <p style="text-align:center;font-size:12px;color:var(--sand);margin-top:14px;">Inscription en 30 secondes · Connexion via Google</p>
+    </div>
+  </div>
+</div>
+
+<script src="script/_shared.js"></script>
+<script>
+// Get salon from URL
+const params = new URLSearchParams(location.search);
+const salonId = parseInt(params.get('id')) || 1;
+const salon = getSalonById(salonId) || SALONS[0];
+
+// Set page title
+document.title = `Koupé — ${salon.nom}`;
+
+// Hero bg
+document.getElementById('detail-hero').style.cssText += `;${colorStyle(salon.couleur)}`;
+
+// Populate service picker
+const picker = document.getElementById('service-picker');
+salon.services.forEach(cat => {
+  cat.items.forEach(item => {
+    const opt = document.createElement('option');
+    opt.value = JSON.stringify(item);
+    opt.textContent = `${item.nom} — ${item.prix} TND (${item.duree})`;
+    picker.appendChild(opt);
+  });
+});
+
+// Render main content
+const main = document.getElementById('detail-main');
+main.innerHTML = `
+  <div class="detail-head">
+    <div class="detail-badges">
+      ${genreBadge(salon.genre, salon.genreLabel)}
+      ${salon.badge ? `<span class="badge ${salon.badge}">${salon.badgeText}</span>` : ''}
+      <span class="badge badge-verified">✓ Vérifié</span>
+    </div>
+    <h1 class="detail-name">${salon.nom}</h1>
+    <div class="detail-meta-row">
+      <div class="detail-meta-item"><span>★</span> <strong>${salon.note}</strong> <span style="color:var(--sand);">(${salon.nbAvis} avis)</span></div>
+      <div class="detail-meta-item">📍 ${salon.adresse}</div>
+      <div class="detail-meta-item">📞 ${salon.tel}</div>
+    </div>
+    <div class="detail-meta-row">
+      <div class="detail-meta-item">🕐 ${salon.horaires}</div>
+      <div class="detail-meta-item" style="color:#27ae60;font-weight:600;">● Ouvert maintenant</div>
+    </div>
+  </div>
+
+  <div class="detail-section">
+    <div class="detail-section-title">À <em>propos</em></div>
+    <div class="detail-about">${salon.description}</div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:14px;">
+      ${salon.tags.map(t => `<span class="badge badge-popular" style="font-size:11px;padding:4px 10px;">${t}</span>`).join('')}
+    </div>
+  </div>
+
+  <div class="detail-section">
+    <div class="detail-section-title">Nos <em>prestations</em></div>
+    ${salon.services.map(cat => `
+      <div class="service-cat-label">${cat.cat}</div>
+      ${cat.items.map(item => `
+        <div class="service-row">
+          <div>
+            <div class="service-name">${item.nom}</div>
+            ${item.desc ? `<div class="service-desc">${item.desc}</div>` : ''}
+          </div>
+          <div class="service-right">
+            <div style="text-align:right;">
+              <div class="service-price">${item.prix} TND</div>
+              <div class="service-dur">${item.duree}</div>
+            </div>
+            <button class="service-book-btn" onclick="quickBook('${item.nom}',${item.prix},'${item.duree}')">Réserver</button>
+          </div>
+        </div>`).join('')}
+    `).join('')}
+  </div>
+
+  <div class="detail-section">
+    <div class="detail-section-title">Avis <em>clients</em></div>
+    <div class="reviews-summary">
+      <div>
+        <div class="rs-score">${salon.note}</div>
+        <div class="rs-stars">${renderStars(salon.note)}</div>
+        <div class="rs-count">${salon.nbAvis} avis vérifiés</div>
+      </div>
+      <div class="rs-bars">
+        <div class="rs-bar"><span>5★</span><div class="rs-bar-track"><div class="rs-bar-fill" style="width:78%"></div></div><span>78%</span></div>
+        <div class="rs-bar"><span>4★</span><div class="rs-bar-track"><div class="rs-bar-fill" style="width:15%"></div></div><span>15%</span></div>
+        <div class="rs-bar"><span>3★</span><div class="rs-bar-track"><div class="rs-bar-fill" style="width:5%"></div></div><span>5%</span></div>
+        <div class="rs-bar"><span>2★</span><div class="rs-bar-track"><div class="rs-bar-fill" style="width:2%"></div></div><span>2%</span></div>
+        <div class="rs-bar"><span>1★</span><div class="rs-bar-track"><div class="rs-bar-fill" style="width:0%"></div></div><span>0%</span></div>
+      </div>
+    </div>
+    <div class="review-list">
+      ${salon.avis.map(a => `
+        <div class="review-card">
+          <div class="review-top">
+            <div class="review-author">
+              <div class="r-avatar">${a.initiales}</div>
+              <div><div class="review-name">${a.nom}</div><div class="review-date">${a.date}</div></div>
+            </div>
+            <div class="stars" style="font-size:13px;">${renderStars(a.note)}</div>
+          </div>
+          <div class="review-text">${a.texte}</div>
+        </div>`).join('')}
+    </div>
+    <button class="btn btn-outline" style="margin-top:16px;" onclick="showToast('💬 Laisser un avis','Disponible après votre première visite.')">Voir tous les avis</button>
+  </div>
+`;
+
+// State
+let selectedDate = 'Mer. 30 avr.';
+let selectedHeure = '10h30';
+let isFav = false;
+
+function selectDate(el, date) {
+  document.querySelectorAll('.date-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  selectedDate = date;
+  document.getElementById('bk-date').textContent = date;
+  updateBooking();
+}
+
+function selectSlot(el, heure) {
+  document.querySelectorAll('.slot:not(.taken)').forEach(s => s.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedHeure = heure;
+  document.getElementById('bk-heure').textContent = heure;
+  updateBooking();
+}
+
+function updateBooking() {
+  const val = document.getElementById('service-picker').value;
+  if (!val) return;
+  const item = JSON.parse(val);
+  document.getElementById('bk-service').textContent = item.nom;
+  document.getElementById('bk-duree').textContent = item.duree;
+  document.getElementById('bk-prix').textContent = item.prix + ' TND';
+  document.getElementById('booking-summary').classList.remove('hidden');
+
+  // Save to session for reservation page
+  sessionStorage.setItem('booking', JSON.stringify({
+    salonId: salon.id,
+    salonNom: salon.nom,
+    service: item.nom,
+    prix: item.prix,
+    duree: item.duree,
+    date: selectedDate,
+    heure: selectedHeure,
+  }));
+}
+
+function quickBook(nom, prix, duree) {
+  // Pre-select in dropdown
+  const opts = document.getElementById('service-picker').options;
+  for (let i = 0; i < opts.length; i++) {
+    if (opts[i].text.startsWith(nom)) {
+      opts[i].selected = true;
+      break;
+    }
+  }
+  updateBooking();
+  document.querySelector('.booking-side').scrollIntoView({ behavior: 'smooth' });
+}
+
+function goReservation() {
+  const val = document.getElementById('service-picker').value;
+  if (!val) {
+    showToast('⚠️ Prestation requise','Veuillez choisir une prestation avant de continuer.');
+    return;
+  }
+  // Check login (simulate: not logged in)
+  const isLoggedIn = sessionStorage.getItem('logged_in');
+  if (!isLoggedIn) {
+    document.getElementById('login-modal').classList.remove('hidden');
+    return;
+  }
+  updateBooking();
+  window.location.href = 'reservation.html';
+}
+
+function toggleFav() {
+  isFav = !isFav;
+  document.getElementById('fav-btn').textContent = isFav ? '♥' : '♡';
+  document.getElementById('fav-btn').style.color = isFav ? 'var(--plum)' : '';
+  showToast(isFav ? '♥ Ajouté aux favoris' : '♡ Retiré des favoris', salon.nom);
+}
+
+function shareModal() {
+  showToast('🔗 Lien copié','Le lien du salon a été copié dans le presse-papier.');
+}
+
+function showToast(title, msg) {
+  const c = document.getElementById('toasts');
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.innerHTML = `<div class="toast-icon info">🔔</div><div><div class="toast-title">${title}</div><div class="toast-msg">${msg}</div></div>`;
+  c.appendChild(t);
+  setTimeout(() => t.remove(), 4000);
+}
+</script>
+</body>
+</html>
