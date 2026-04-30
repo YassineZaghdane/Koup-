@@ -75,11 +75,22 @@ body { padding-top: var(--nav-h); }
 .booking-price { font-family:var(--font-display); font-style:italic; color:var(--plum); }
 .booking-info-txt { margin-top:12px; font-size:12px; color:var(--sand); text-align:center; }
 @media (max-width:600px) {
+  .detail-hero { height:280px; }
   .service-row { flex-direction:column; align-items:flex-start; gap:10px; }
   .service-right { width:100%; justify-content:space-between; }
   .booking-side { padding:16px; border-radius:14px; position:static; top:auto; }
   .detail-back { top:12px; left:12px; padding:7px 12px; }
   .detail-actions { top:12px; right:12px; }
+  .detail-photos-btn { right:12px; bottom:12px; padding:6px 11px; font-size:12px; max-width:60vw; overflow:hidden; text-overflow:ellipsis; }
+  .detail-head { margin-bottom:20px; padding-bottom:18px; }
+  .detail-name { font-size:clamp(34px, 8.6vw, 40px); line-height:1.08; }
+  .detail-meta-row { flex-direction:column; gap:8px; }
+  .detail-meta-item { flex-wrap:wrap; word-break:break-word; }
+  .detail-meta-item strong { font-size:14px; }
+  .detail-about { font-size:14px; line-height:1.65; }
+  .reviews-summary { padding:14px; gap:12px; }
+  .rs-score { font-size:36px; }
+  .rs-bars { min-width:0; width:100%; }
 }
 
 /* Modal service booking */

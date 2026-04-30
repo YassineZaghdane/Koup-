@@ -262,6 +262,8 @@ img, video, canvas, svg { max-width: 100%; height: auto; }
   .toast-container { right: 10px; left: 10px; top: 72px; }
   .toast { max-width: 100%; }
   .stepper { overflow-x: auto; width: 100%; padding-bottom: 4px; }
+  .section { padding: 32px 14px; }
+  .section-header { align-items: flex-start; }
 }
 
 .pro-mobile-nav { display:none; }

@@ -12,7 +12,7 @@ body { padding-top: var(--nav-h); }
 .search-top-inner { max-width:1280px; margin:0 auto; display:flex; align-items:center; gap:12px; }
 .search-input-main { flex:1; background:var(--cream); border:1px solid var(--border); border-radius:12px; padding:12px 16px; font-size:14px; font-family:var(--font-body); color:var(--velvet); max-width:440px; }
 .search-input-main:focus { outline:none; border-color:var(--plum); }
-.search-chips { display:flex; gap:8px; overflow-x:auto; scrollbar-width:none; flex:1; }
+.search-chips { display:flex; gap:8px; overflow-x:auto; scrollbar-width:none; flex:1; min-width:0; }
 .search-chips::-webkit-scrollbar { display:none; }
 .mobile-filter-toggle { display:none; }
 
@@ -20,14 +20,21 @@ body { padding-top: var(--nav-h); }
 @media (max-width:1100px) { .search-body { grid-template-columns:200px 1fr; } .map-col { display:none; } }
 @media (max-width:700px) {
   .search-top { padding:10px 14px; }
-  .search-top-inner { flex-direction:column; align-items:stretch; gap:10px; }
-  .search-input-main { max-width:none; width:100%; }
-  .search-chips { width:100%; flex-wrap:wrap; overflow:visible; }
-  .mobile-filter-toggle { display:flex; justify-content:center; width:100%; }
+  .search-top-inner { display:grid; grid-template-columns:1fr; align-items:stretch; gap:10px; }
+  .search-input-main { max-width:none; width:100%; min-width:0; }
+  .search-chips { width:100%; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; overflow:visible; }
+  .search-chips .fchip { width:100%; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .search-top-inner > .btn.btn-primary { width:100%; justify-content:center; margin:0; }
+  .mobile-filter-toggle { display:flex; justify-content:center; width:100%; margin-top:-2px; }
   .search-body { grid-template-columns:1fr; padding:12px; gap:12px; }
   .filters-col { display:block; position:static; top:auto; }
   .filters-col.mobile-hidden > div { display:none; }
   .filters-col > div { padding:14px !important; border-radius:12px !important; }
+}
+@media (max-width:430px) {
+  .results-count { font-size:18px; }
+  .results-header { gap:8px; }
+  .sort-select { width:100%; border-radius:12px; }
 }
 
 /* FILTERS */
