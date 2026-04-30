@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Koupe Pro - Tableau de bord</title>
+<link rel="stylesheet" href="_styles.css">
+<style>
+body{margin:0;background:var(--cream);font-family:var(--font-body);display:flex}
+.pro-side{width:240px;min-height:100vh;background:var(--velvet);padding:18px 10px;display:flex;flex-direction:column}
+.pro-brand{color:#fff;font-family:var(--font-display);font-size:30px;padding:0 10px 2px}
+.pro-badge{color:rgba(231,212,187,.45);font-size:11px;letter-spacing:.08em;font-weight:700;padding:0 10px 12px}
+.pro-link{display:block;color:rgba(255,255,255,.7);text-decoration:none;padding:10px 12px;border-radius:10px;margin:3px 0;font-size:14px}
+.pro-link.active{background:var(--plum);color:#fff}
+.pro-side-footer{margin-top:auto;padding-top:10px}
+.pro-main{flex:1;padding:24px}
+.pro-topbar{display:flex;justify-content:space-between;gap:12px;align-items:center}
+.pro-title{margin:0;font-family:var(--font-display);font-weight:500}
+.pro-subtitle{color:var(--sand);font-size:13px;margin-top:3px}
+.pro-top-actions{display:flex;gap:8px}
+.pro-breadcrumb{font-size:12px;color:var(--sand);margin:10px 0 14px}
+.card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:16px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.big{font-family:var(--font-display);font-size:30px;color:var(--velvet);font-style:italic}
+@media(max-width:900px){.pro-side{display:none}.grid{grid-template-columns:1fr 1fr}.pro-topbar{flex-direction:column;align-items:flex-start}}
+</style>
+</head>
+<body>
+<aside class="pro-side" id="pro-side"></aside>
+<main class="pro-main">
+  <div class="pro-topbar" id="pro-topbar"></div>
+  <div class="pro-breadcrumb" id="pro-breadcrumb"></div>
+  <div class="grid">
+    <div class="card"><div style="font-size:12px;color:var(--sand);">RDV aujourd'hui</div><div class="big" id="k-rdv">0</div></div>
+    <div class="card"><div style="font-size:12px;color:var(--sand);">CA du mois</div><div class="big" id="k-ca">0</div></div>
+    <div class="card"><div style="font-size:12px;color:var(--sand);">Nouveaux clients</div><div class="big" id="k-clients">0</div></div>
+    <div class="card"><div style="font-size:12px;color:var(--sand);">Taux remplissage</div><div class="big" id="k-fill">0%</div></div>
+  </div>
+  <div class="card" style="margin-top:14px;">
+    <h3 style="margin:0 0 10px;">Acces rapides</h3>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <a class="btn btn-outline btn-sm" href="pro-agenda.html">Agenda</a>
+      <a class="btn btn-outline btn-sm" href="pro-clients.html">Clients</a>
+      <a class="btn btn-outline btn-sm" href="pro-reservations.html">Reservations</a>
+      <a class="btn btn-outline btn-sm" href="pro-services.html">Services & Prix</a>
+    </div>
+  </div>
+  <div class="toast-container" id="pro-toasts"></div>
+</main>
+<script src="script/_shared.js"></script>
+<script src="script/pro-ui.js"></script>
+<script>
+initProPage({ active: "dashboard", title: "Tableau de bord Pro", breadcrumb: "Tableau de bord" });
+document.getElementById("k-rdv").textContent = PRO_DEMO.stats.rdvJour;
+document.getElementById("k-ca").textContent = PRO_DEMO.stats.caMois + " TND";
+document.getElementById("k-clients").textContent = PRO_DEMO.stats.nouveauxClients;
+document.getElementById("k-fill").textContent = PRO_DEMO.stats.tauxRemplissage + "%";
+</script>
+</body>
+</html>

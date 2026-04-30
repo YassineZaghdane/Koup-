@@ -63,7 +63,7 @@ body { padding-top: var(--nav-h); }
     <ul class="nav-links">
       <li><a href="index.html">Accueil</a></li>
       <li><a href="resultats.html" class="active">Salons</a></li>
-      <li><a href="dashboard-pro.html">Espace Pro</a></li>
+      <li><a href="pro-dashboard.html">Espace Pro</a></li>
     </ul>
     <div class="nav-spacer"></div>
     <div class="nav-actions">
@@ -74,6 +74,9 @@ body { padding-top: var(--nav-h); }
 </nav>
 
 <div class="toast-container" id="toasts"></div>
+<div style="max-width:1280px;margin:0 auto;padding:10px 24px 0;font-size:12px;color:var(--sand);">
+  <a href="index.html" style="color:var(--sand);text-decoration:none;">Accueil</a> / <strong style="color:var(--plum);">Salons</strong>
+</div>
 
 <!-- SEARCH BAR TOP -->
 <div class="search-top">
@@ -177,6 +180,7 @@ body { padding-top: var(--nav-h); }
 
 <script src="script/_shared.js"></script>
 <script>
+initMainNavActive();
 // Render results
 const list = document.getElementById('result-list');
 document.getElementById('result-count').textContent = SALONS.length;

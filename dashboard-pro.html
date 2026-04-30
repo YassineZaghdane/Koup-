@@ -160,24 +160,24 @@ body { display:flex; min-height:100vh; background:var(--cream); font-family:var(
   </div>
 
   <div class="pro-menu-section">Principal</div>
-  <a href="#" class="pro-menu-item active" onclick="switchSection('dashboard',this)"><span class="pro-menu-icon">📊</span> Tableau de bord</a>
-  <a href="#" class="pro-menu-item" onclick="switchSection('agenda',this)"><span class="pro-menu-icon">📅</span> Agenda</a>
-  <a href="#" class="pro-menu-item" onclick="switchSection('clients',this)"><span class="pro-menu-icon">👥</span> Clients</a>
-  <a href="#" class="pro-menu-item" onclick="switchSection('reservations',this)"><span class="pro-menu-icon">🗓️</span> Réservations</a>
-  <a href="#" class="pro-menu-item" onclick="switchSection('services',this)"><span class="pro-menu-icon">✂️</span> Services & Prix</a>
-  <a href="#" class="pro-menu-item" onclick="switchSection('equipe',this)"><span class="pro-menu-icon">🧑‍🤝‍🧑</span> Équipe</a>
+  <a href="pro-dashboard.html" class="pro-menu-item active"><span class="pro-menu-icon">📊</span> Tableau de bord</a>
+  <a href="pro-agenda.html" class="pro-menu-item"><span class="pro-menu-icon">📅</span> Agenda</a>
+  <a href="pro-clients.html" class="pro-menu-item"><span class="pro-menu-icon">👥</span> Clients</a>
+  <a href="pro-reservations.html" class="pro-menu-item"><span class="pro-menu-icon">🗓️</span> Réservations</a>
+  <a href="pro-services.html" class="pro-menu-item"><span class="pro-menu-icon">✂️</span> Services & Prix</a>
+  <a href="pro-equipe.html" class="pro-menu-item"><span class="pro-menu-icon">🧑‍🤝‍🧑</span> Équipe</a>
 
   <div class="pro-menu-section">Insights</div>
-  <a href="#" class="pro-menu-item" onclick="switchSection('stats',this)"><span class="pro-menu-icon">📈</span> Statistiques</a>
-  <a href="#" class="pro-menu-item" onclick="switchSection('avis',this)"><span class="pro-menu-icon">⭐</span> Avis clients</a>
+  <a href="pro-statistiques.html" class="pro-menu-item"><span class="pro-menu-icon">📈</span> Statistiques</a>
+  <a href="pro-avis.html" class="pro-menu-item"><span class="pro-menu-icon">⭐</span> Avis clients</a>
 
   <div class="pro-menu-section">Croissance</div>
-  <a href="#" class="pro-menu-item" onclick="switchSection('marketing',this)"><span class="pro-menu-icon">📣</span> Marketing</a>
-  <a href="#" class="pro-menu-item" onclick="switchSection('abonnement',this)"><span class="pro-menu-icon">💎</span> Abonnement</a>
-  <a href="#" class="pro-menu-item" onclick="switchSection('params',this)"><span class="pro-menu-icon">⚙️</span> Paramètres</a>
+  <a href="pro-marketing.html" class="pro-menu-item"><span class="pro-menu-icon">📣</span> Marketing</a>
+  <a href="pro-abonnement.html" class="pro-menu-item"><span class="pro-menu-icon">💎</span> Abonnement</a>
+  <a href="pro-parametres.html" class="pro-menu-item"><span class="pro-menu-icon">⚙️</span> Paramètres</a>
 
   <div class="sidebar-footer">
-    <a href="index.html" class="sidebar-client-link">
+    <a href="salon.html?id=1" class="sidebar-client-link">
       <span>↗</span> Voir notre profil salon
     </a>
     <a href="index.html" class="sidebar-client-link" style="margin-top:4px;">
@@ -277,6 +277,16 @@ body { display:flex; min-height:100vh; background:var(--cream); font-family:var(
       </div>
     </div>
   </div>
+  </section>
+
+  <section class="pro-section" id="section-agenda">
+    <div class="pro-card">
+      <div class="pro-card-header">
+        <div class="pro-card-title">Agenda <em>complet</em></div>
+        <div class="agenda-date-title">Mer. 30 avril</div>
+      </div>
+      <div id="agenda-only-list"></div>
+    </div>
   </section>
 
   <section class="pro-section" id="section-clients">
@@ -440,6 +450,7 @@ const EXTRA_MARKETING = [
 ];
 
 const agendaList = document.getElementById('agenda-list');
+const agendaOnlyList = document.getElementById('agenda-only-list');
 PRO_DEMO.agenda.forEach(slot => {
   let slotHtml = '';
   if (slot.statut === 'free') {
@@ -450,7 +461,9 @@ PRO_DEMO.agenda.forEach(slot => {
     const cls = slot.statut;
     slotHtml = `<div class="agenda-slot ${cls}"><span class="ag-client">${slot.client}</span><span class="ag-service">${slot.service} · ${slot.duree} min</span><button class="btn btn-ghost btn-sm" style="margin-left:auto;font-size:11px;${slot.statut.includes('velvet')||slot.statut.includes('plum')?'color:#fff;':''}" onclick="showToast('📋 RDV','Détails de ${slot.client}')">Détails</button></div>`;
   }
-  agendaList.innerHTML += `<div class="agenda-row"><div class="agenda-time-txt">${slot.heure}</div>${slotHtml}</div>`;
+  const rowHtml = `<div class="agenda-row"><div class="agenda-time-txt">${slot.heure}</div>${slotHtml}</div>`;
+  agendaList.innerHTML += rowHtml;
+  agendaOnlyList.innerHTML += rowHtml;
 });
 
 const actList = document.getElementById('activity-list');
@@ -650,11 +663,30 @@ function renderMarketingSection() {
 
 function switchSection(section, el) {
   document.querySelectorAll('.pro-menu-item').forEach(i => i.classList.remove('active'));
-  el.classList.add('active');
+  if (el) el.classList.add('active');
+  const sectionToHref = {
+    dashboard: 'pro-dashboard.html',
+    agenda: 'pro-agenda.html',
+    clients: 'pro-clients.html',
+    reservations: 'pro-reservations.html',
+    services: 'pro-services.html',
+    equipe: 'pro-equipe.html',
+    stats: 'pro-statistiques.html',
+    avis: 'pro-avis.html',
+    marketing: 'pro-marketing.html',
+    abonnement: 'pro-abonnement.html',
+    params: 'pro-parametres.html',
+  };
+  const linked = document.querySelector(`.pro-menu-item[href="${sectionToHref[section]}"]`);
+  if (!el && linked) linked.classList.add('active');
+  if (!el && !linked) {
+    const fallback = document.querySelector('.pro-menu-item[href="pro-dashboard.html"]');
+    if (fallback) fallback.classList.add('active');
+  }
   document.querySelectorAll('.pro-section').forEach(s => s.classList.remove('active'));
   const map = {
     dashboard: 'section-dashboard',
-    agenda: 'section-dashboard',
+    agenda: 'section-agenda',
     clients: 'section-clients',
     reservations: 'section-reservations',
     services: 'section-services',
@@ -667,6 +699,7 @@ function switchSection(section, el) {
   };
   const target = document.getElementById(map[section] || 'section-dashboard');
   target.classList.add('active');
+  if (location.hash !== '#' + section) history.replaceState(null, '', '#' + section);
 }
 
 renderClientsTable();
@@ -690,6 +723,9 @@ topNewRdvBtn.addEventListener('click', () => {
   switchSection('reservations', menu);
   document.getElementById('new-res-client').focus();
 });
+
+const initialSection = (location.hash || '#dashboard').replace('#', '');
+switchSection(initialSection, null);
 
 function showToast(title, msg) {
   const c = document.getElementById('toasts');

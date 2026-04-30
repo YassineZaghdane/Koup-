@@ -461,3 +461,21 @@ function goReservationFromSalon(salonId, clientName) {
   sessionStorage.setItem("booking", JSON.stringify(booking));
   window.location.href = "reservation.html";
 }
+
+function initMainNavActive() {
+  const links = document.querySelectorAll('.nav-links a');
+  if (!links.length) return;
+  const page = location.pathname.split('/').pop() || 'index.html';
+  let key = 'home';
+  if (page === 'resultats.html' || page === 'salon.html' || page === 'reservation.html') key = 'salons';
+  if (page === 'dashboard-pro.html' || page.startsWith('pro-')) key = 'pro';
+  if (page === 'compte.html') key = 'compte';
+  links.forEach(a => {
+    const href = a.getAttribute('href') || '';
+    const isHome = key === 'home' && href.includes('index.html');
+    const isSalons = key === 'salons' && href.includes('resultats.html');
+    const isPro = key === 'pro' && (href.includes('dashboard-pro.html') || href.includes('pro-dashboard.html'));
+    const isCompte = key === 'compte' && href.includes('compte.html');
+    a.classList.toggle('active', isHome || isSalons || isPro || isCompte);
+  });
+}

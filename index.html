@@ -122,7 +122,7 @@ body { padding-top: var(--nav-h); }
       <li><a href="index.html" class="active">Accueil</a></li>
       <li><a href="resultats.html">Salons</a></li>
       <li><a href="#" onclick="showToast('🔔 Bientôt disponible !','Nos offres arrivent prochainement.')">Offres</a></li>
-      <li><a href="dashboard-pro.html">Espace Pro</a></li>
+      <li><a href="pro-dashboard.html">Espace Pro</a></li>
     </ul>
     <div class="nav-spacer"></div>
     <div class="nav-search-bar" onclick="goSearch()">
@@ -141,7 +141,7 @@ body { padding-top: var(--nav-h); }
 <div id="mobile-menu" class="hidden" style="position:fixed;top:64px;left:0;right:0;background:#fff;border-bottom:1px solid var(--border);z-index:999;padding:16px 20px;display:flex;flex-direction:column;gap:8px;">
   <a href="index.html" style="padding:12px;border-radius:10px;background:var(--cream);font-size:14px;font-weight:600;color:var(--plum);text-decoration:none;">Accueil</a>
   <a href="resultats.html" style="padding:12px;border-radius:10px;font-size:14px;color:var(--velvet);text-decoration:none;">Salons</a>
-  <a href="dashboard-pro.html" style="padding:12px;border-radius:10px;font-size:14px;color:var(--velvet);text-decoration:none;">Espace Pro</a>
+  <a href="pro-dashboard.html" style="padding:12px;border-radius:10px;font-size:14px;color:var(--velvet);text-decoration:none;">Espace Pro</a>
   <hr style="border:none;border-top:1px solid var(--border);margin:4px 0;">
   <a href="connexion.html" class="btn btn-primary btn-block">Connexion / Inscription</a>
 </div>
@@ -301,7 +301,7 @@ body { padding-top: var(--nav-h); }
       <h2 class="pro-cta-title">Développez votre salon<br>avec <em>Koupé Pro</em></h2>
       <p class="pro-cta-desc">Agenda en ligne, rappels automatiques, statistiques de performance et programme fidélité intégré. Tout ce dont vous avez besoin pour faire croître votre activité.</p>
       <div style="display:flex;gap:12px;flex-wrap:wrap;">
-        <a href="dashboard-pro.html" class="btn btn-almond btn-lg">Voir le dashboard Pro</a>
+        <a href="pro-dashboard.html" class="btn btn-almond btn-lg">Voir le dashboard Pro</a>
         <button class="btn btn-white-outline btn-lg" onclick="showToast('📋 Formulaire Pro','Notre équipe vous contactera sous 24h.')">Essai gratuit 30 jours</button>
       </div>
     </div>
@@ -333,7 +333,7 @@ body { padding-top: var(--nav-h); }
     <div class="footer-col">
       <h4>Professionnel</h4>
       <ul>
-        <li><a href="dashboard-pro.html">Dashboard Pro</a></li>
+        <li><a href="pro-dashboard.html">Dashboard Pro</a></li>
         <li><a href="#">Tarifs Pro</a></li>
         <li><a href="#">Koupé Boost</a></li>
         <li><a href="#">Témoignages</a></li>
@@ -357,6 +357,7 @@ body { padding-top: var(--nav-h); }
 
 <script src="script/_shared.js"></script>
 <script>
+initMainNavActive();
 // Render popular salons
 const grid = document.getElementById('salons-grid');
 getPopulaires().forEach(s => {

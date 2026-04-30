@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Koupe Pro - Reservations</title>
+<link rel="stylesheet" href="_styles.css">
+<style>
+body{margin:0;background:var(--cream);font-family:var(--font-body);display:flex}.pro-side{width:240px;min-height:100vh;background:var(--velvet);padding:18px 10px;display:flex;flex-direction:column}.pro-brand{color:#fff;font-family:var(--font-display);font-size:30px;padding:0 10px 2px}.pro-badge{color:rgba(231,212,187,.45);font-size:11px;letter-spacing:.08em;font-weight:700;padding:0 10px 12px}.pro-link{display:block;color:rgba(255,255,255,.7);text-decoration:none;padding:10px 12px;border-radius:10px;margin:3px 0;font-size:14px}.pro-link.active{background:var(--plum);color:#fff}.pro-side-footer{margin-top:auto;padding-top:10px}.pro-main{flex:1;padding:24px}.pro-topbar{display:flex;justify-content:space-between;gap:12px;align-items:center}.pro-title{margin:0;font-family:var(--font-display);font-weight:500}.pro-subtitle{color:var(--sand);font-size:13px;margin-top:3px}.pro-top-actions{display:flex;gap:8px}.pro-breadcrumb{font-size:12px;color:var(--sand);margin:10px 0 14px}.card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:16px}table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px solid var(--border-soft);text-align:left;font-size:13px}.controls{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}@media(max-width:900px){.pro-side{display:none}.pro-topbar{flex-direction:column;align-items:flex-start}}
+</style>
+</head>
+<body>
+<aside class="pro-side" id="pro-side"></aside>
+<main class="pro-main">
+  <div class="pro-topbar" id="pro-topbar"></div>
+  <div class="pro-breadcrumb" id="pro-breadcrumb"></div>
+  <div class="card">
+    <div class="controls"><input id="q" class="form-input" placeholder="Rechercher..." style="max-width:240px"><select id="s" class="form-select" style="max-width:170px"><option value="all">Tous statuts</option><option>Confirmé</option><option>En attente</option><option>Annulé</option></select><button class="btn btn-primary btn-sm" onclick="addRes()">Ajouter</button></div>
+    <table><thead><tr><th>ID</th><th>Client</th><th>Service</th><th>Date</th><th>Heure</th><th>Montant</th><th>Statut</th><th>Actions</th></tr></thead><tbody id="tb"></tbody></table>
+  </div>
+  <div class="toast-container" id="pro-toasts"></div>
+</main>
+<script src="script/_shared.js"></script>
+<script src="script/pro-ui.js"></script>
+<script>
+initProPage({ active: "reservations", title: "Reservations", breadcrumb: "Reservations" });
+let data=getProReservations();function save(){saveProReservations(data)}function render(){const q=(document.getElementById('q').value||'').toLowerCase();const s=document.getElementById('s').value;const rows=data.filter(r=>(r.client.toLowerCase().includes(q)||r.service.toLowerCase().includes(q)||r.id.toLowerCase().includes(q))&&(s==='all'||r.statut===s));document.getElementById('tb').innerHTML=rows.map(r=>`<tr><td>${r.id}</td><td>${r.client}</td><td>${r.service}</td><td>${r.date}</td><td>${r.heure}</td><td>${r.montant} TND</td><td>${r.statut}</td><td><button class="btn btn-outline btn-sm" onclick="editRes('${r.id}')">Modifier</button> <button class="btn btn-ghost btn-sm" style="color:#c0392b" onclick="delRes('${r.id}')">Supprimer</button></td></tr>`).join('')}function addRes(){const c=prompt('Client');if(!c)return;const sv=prompt('Service');if(!sv)return;const h=prompt('Heure','17h00')||'17h00';const p=parseInt(prompt('Montant','30')||'0',10)||0;data.unshift({id:'R-'+String(Date.now()).slice(-6),client:c,service:sv,date:"Aujourd'hui",heure:h,statut:'En attente',montant:p});save();render();proShowToast('Reservation ajoutee',c)}function editRes(id){const r=data.find(x=>x.id===id);if(!r)return;const c=prompt('Client',r.client);if(c===null)return;const sv=prompt('Service',r.service);if(sv===null)return;const d=prompt('Date',r.date);if(d===null)return;const h=prompt('Heure',r.heure);if(h===null)return;const m=parseInt(prompt('Montant',String(r.montant))||String(r.montant),10);const s=prompt('Statut (Confirmé, En attente, Annulé)',r.statut);if(s===null)return;r.client=c||r.client;r.service=sv||r.service;r.date=d||r.date;r.heure=h||r.heure;r.montant=Number.isNaN(m)?r.montant:m;r.statut=s||r.statut;save();render()}function delRes(id){if(!confirm('Supprimer cette reservation ?'))return;data=data.filter(x=>x.id!==id);save();render()}document.getElementById('q').addEventListener('input',render);document.getElementById('s').addEventListener('change',render);render();
+</script>
+</body>
+</html>
